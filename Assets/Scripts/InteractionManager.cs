@@ -26,6 +26,8 @@ public class InteractionManager : MonoBehaviour
     private List<ARRaycastHit> _raycastHits;
     private GameObject _targetMarker;
 
+    private List<Transform> _gameObjectsPos;
+
     private void Awake()
     {
         _aRRaycastManager = GetComponent<ARRaycastManager>();
@@ -34,6 +36,8 @@ public class InteractionManager : MonoBehaviour
         _stateInitializationAction = new UnityAction[Enum.GetNames(typeof(InterractionManagerState)).Length];
         _stateInitializationAction[(int)InterractionManagerState.Default] = InitializeDefaultScreen;
         _stateInitializationAction[(int)InterractionManagerState.Default] = InitializeObjectSpawner;
+
+        _gameObjectsPos = new List<Transform>();
     }
 
     private void Start()
@@ -140,8 +144,36 @@ public class InteractionManager : MonoBehaviour
 
     private void SpawnObject(Touch touch)
     {
-        _aRRaycastManager.Raycast(touch.position, _raycastHits, TrackableType.Planes);
-        Instantiate(_spawnedObjectPrehabs[_spawnedObjectType], _raycastHits[0].pose.position, _spawnedObjectPrehabs[_spawnedObjectType].transform.rotation);
+        if (_gameObjectsPos.Count == 0)
+        {
+            _aRRaycastManager.Raycast(touch.position, _raycastHits, TrackableType.Planes);
+            GameObject curObj = Instantiate(_spawnedObjectPrehabs[_spawnedObjectType], _raycastHits[0].pose.position, _spawnedObjectPrehabs[_spawnedObjectType].transform.rotation);
+            _gameObjectsPos.Add(curObj.transform);
+        }
+        else
+        {
+            bool objsClose = false;
+            _aRRaycastManager.Raycast(touch.position, _raycastHits, TrackableType.Planes);
+            foreach (Transform pos in _gameObjectsPos)
+            {
+                if (Vector3.Distance(pos.position, _raycastHits[0].pose.position) < 0.75f)
+                {
+                    objsClose = true;
+                    break;
+                }
+            }
+            
+            if (!objsClose)
+            {
+                GameObject curObj = Instantiate(_spawnedObjectPrehabs[_spawnedObjectType], _raycastHits[0].pose.position, _spawnedObjectPrehabs[_spawnedObjectType].transform.rotation);
+                _gameObjectsPos.Add(curObj.transform);
+            }
+            else
+            {
+                Debug.Log("Can't create object because it too close to other object");
+            }
+        }
+        
     }
 
     private void InitializeDefaultScreen()
