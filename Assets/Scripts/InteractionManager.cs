@@ -10,6 +10,7 @@ using UnityEngine.XR.ARSubsystems;
 
 public class InteractionManager : MonoBehaviour
 {
+    [SerializeField] private Camera _arCamera;
     [SerializeField] private GameObject[] _spawnedObjectPrehabs;
     [SerializeField] private GameObject _targetMarkerPrehab;
     [SerializeField] private GameObject[] _uiScreens;
@@ -17,10 +18,11 @@ public class InteractionManager : MonoBehaviour
     // Each interaction manager state correlate to UI Screens:
     // Default (0) - _uiScreens[0], SpawnObject(1) - _uiScreens[1] etc.
 
-    private enum InterractionManagerState { Default, SpawnObject }
+    private enum InterractionManagerState { Default, SpawnObject, SelectObject }
     private InterractionManagerState _currentState;
     private UnityAction[] _stateInitializationAction;
     private int _spawnedObjectType = -1;
+    private int _spawnedObjectCount = 0;
 
     private ARRaycastManager _aRRaycastManager;
     private List<ARRaycastHit> _raycastHits;
@@ -33,7 +35,8 @@ public class InteractionManager : MonoBehaviour
 
         _stateInitializationAction = new UnityAction[Enum.GetNames(typeof(InterractionManagerState)).Length];
         _stateInitializationAction[(int)InterractionManagerState.Default] = InitializeDefaultScreen;
-        _stateInitializationAction[(int)InterractionManagerState.Default] = InitializeObjectSpawner;
+        _stateInitializationAction[(int)InterractionManagerState.SpawnObject] = InitializeObjectSpawner;
+        _stateInitializationAction[(int)InterractionManagerState.SelectObject] = InitializeObjectSelection;
     }
 
     private void Start()
@@ -73,6 +76,12 @@ public class InteractionManager : MonoBehaviour
         UpdateUIScreens();
     }
 
+    public void DisplayDefaultScreen()
+    {
+        _currentState = InterractionManagerState.Default;
+        UpdateUIScreens();
+    }
+
     private void Update()
     {
         if (Input.touchCount > 0)
@@ -86,11 +95,52 @@ public class InteractionManager : MonoBehaviour
                     ProcessTouchSpawnObject(touch, isOverUI);
                     break;
 
+                case InterractionManagerState.SelectObject:
+                    ProcessTouchSelectObject(touch, isOverUI);
+                    break;
                 default:
                     break;
             }
         }
         //ProcessFirstTouch(Input.GetTouch(0));
+    }
+
+    private void ProcessTouchSelectObject(Touch touch, bool isOverUI)
+    {
+        if (touch.phase == TouchPhase.Began)
+        {
+            if (!isOverUI)
+            {
+                TrySelectObject(touch.position);
+            }
+        }
+    }
+
+    private void TrySelectObject(Vector2 position)
+    {
+        // fire a ray from the camera to the target screen position
+        Ray ray = _arCamera.ScreenPointToRay(position);
+        RaycastHit hitObject;
+
+        if (Physics.Raycast(ray, out hitObject))
+        {
+            if (hitObject.collider.CompareTag("SpawnedObject"))
+            {
+                // if we hit spawned object tag, try to get SpawnedObject from it and descriptionScreen from UI screen
+                GameObject selectedObject = hitObject.collider.gameObject;
+                SpawnedObject objectDescription = selectedObject.GetComponent<SpawnedObject>();
+
+                if (!objectDescription)
+                    throw new MissingComponentException(objectDescription.GetType().Name + " component not found!");
+
+                SpawnedObjectDescriptionScreen descScreen = _uiScreens[(int)InterractionManagerState.SelectObject].GetComponent<SpawnedObjectDescriptionScreen>();
+                if (!descScreen)
+                    throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
+
+                // then we call description screen to show info for the targeted object
+                descScreen.ShowObjectDescription(objectDescription);
+            }
+        }
     }
 
     private void ProcessTouchSpawnObject(Touch touch, bool overUI)
@@ -141,7 +191,15 @@ public class InteractionManager : MonoBehaviour
     private void SpawnObject(Touch touch)
     {
         _aRRaycastManager.Raycast(touch.position, _raycastHits, TrackableType.Planes);
-        Instantiate(_spawnedObjectPrehabs[_spawnedObjectType], _raycastHits[0].pose.position, _spawnedObjectPrehabs[_spawnedObjectType].transform.rotation);
+        GameObject newObject = Instantiate(_spawnedObjectPrehabs[_spawnedObjectType], _raycastHits[0].pose.position, _spawnedObjectPrehabs[_spawnedObjectType].transform.rotation);
+
+        
+        //give number to the new spawned object
+        SpawnedObject spObj = newObject.GetComponent<SpawnedObject>();
+        if (!spObj)
+            throw new MissingComponentException(spObj.GetType().Name + " component not found!");
+
+        spObj.GiveNumber(++_spawnedObjectCount);
     }
 
     private void InitializeDefaultScreen()
@@ -154,6 +212,15 @@ public class InteractionManager : MonoBehaviour
     {
         Debug.Log("Initialize spawner");
         _spawnedObjectType = -1;
+    }
+
+    private void InitializeObjectSelection()
+    {
+        SpawnedObjectDescriptionScreen descScreen = _uiScreens[(int)InterractionManagerState.SelectObject].GetComponent<SpawnedObjectDescriptionScreen>();
+        if (!descScreen)
+            throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
+
+        descScreen.InitializeScreen();
     }
 
     public void SelectSpawnedObjectType(int objectType)
