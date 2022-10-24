@@ -5,7 +5,9 @@ using UnityEngine;
 public class SpawnedObject : MonoBehaviour
 {
     [SerializeField] private string _displayName;
-    [SerializeField] private string _description;
+    [SerializeField] private string _description_one;
+    [SerializeField] private string _description_two;
+    [SerializeField] private string _description_three;
 
     private int _number = -1;
 
@@ -28,7 +30,7 @@ public class SpawnedObject : MonoBehaviour
     {
         get
         {
-            return _description;
+            return _description_one;
         }
     }
 

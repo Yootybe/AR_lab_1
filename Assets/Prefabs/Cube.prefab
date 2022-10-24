@@ -109,4 +109,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _displayName: Cube
-  _description: Red and beauty
+  _description_one: Red
+  _description_two: Good
+  _description_three: Huge

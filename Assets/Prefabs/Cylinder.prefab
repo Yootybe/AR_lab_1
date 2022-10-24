@@ -110,4 +110,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _displayName: Cyclynder
-  _description: Blue and sweet
+  _description_one: Blue
+  _description_two: Tall
+  _description_three: Long
