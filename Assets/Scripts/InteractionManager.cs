@@ -116,6 +116,8 @@ public class InteractionManager : MonoBehaviour
         }
     }
 
+
+    private GameObject lastSelectedObject;
     private void TrySelectObject(Vector2 position)
     {
         // fire a ray from the camera to the target screen position
@@ -139,6 +141,8 @@ public class InteractionManager : MonoBehaviour
 
                 // then we call description screen to show info for the targeted object
                 descScreen.ShowObjectDescription(objectDescription);
+
+                lastSelectedObject = selectedObject;
             }
         }
     }
@@ -192,12 +196,15 @@ public class InteractionManager : MonoBehaviour
     {
         _aRRaycastManager.Raycast(touch.position, _raycastHits, TrackableType.Planes);
         GameObject newObject = Instantiate(_spawnedObjectPrehabs[_spawnedObjectType], _raycastHits[0].pose.position, _spawnedObjectPrehabs[_spawnedObjectType].transform.rotation);
-
+        
         
         //give number to the new spawned object
         SpawnedObject spObj = newObject.GetComponent<SpawnedObject>();
         if (!spObj)
             throw new MissingComponentException(spObj.GetType().Name + " component not found!");
+
+        spObj.Rotation = newObject.transform.rotation;
+        spObj.Scale = newObject.transform.localScale;
 
         spObj.GiveNumber(++_spawnedObjectCount);
     }
@@ -226,5 +233,75 @@ public class InteractionManager : MonoBehaviour
     public void SelectSpawnedObjectType(int objectType)
     {
         _spawnedObjectType = objectType;
+    }
+
+    public void showNextDescription()
+    {
+        SpawnedObjectDescriptionScreen descScreen = _uiScreens[(int)InterractionManagerState.SelectObject].GetComponent<SpawnedObjectDescriptionScreen>();
+        if (!descScreen)
+            throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
+
+        // then we call description screen to show info for the targeted object
+        descScreen.UpdateDescription(lastSelectedObject.GetComponent<SpawnedObject>(), true);
+    }
+
+    public void showPrevDescription()
+    {
+        SpawnedObjectDescriptionScreen descScreen = _uiScreens[(int)InterractionManagerState.SelectObject].GetComponent<SpawnedObjectDescriptionScreen>();
+        if (!descScreen)
+            throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
+
+        // then we call description screen to show info for the targeted object
+        descScreen.UpdateDescription(lastSelectedObject.GetComponent<SpawnedObject>(), false);
+    }
+
+    public void RotateClockwise()
+    {
+        SpawnedObjectDescriptionScreen descScreen = _uiScreens[(int)InterractionManagerState.SelectObject].GetComponent<SpawnedObjectDescriptionScreen>();
+        if (!descScreen)
+            throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
+
+        Quaternion rotation = lastSelectedObject.transform.rotation;
+        rotation.eulerAngles = new Vector3(rotation.eulerAngles.x + 30, rotation.eulerAngles.y, rotation.eulerAngles.z);
+        lastSelectedObject.transform.rotation = rotation;
+
+        lastSelectedObject.GetComponent<SpawnedObject>().Rotation = lastSelectedObject.transform.rotation;
+    }
+
+    public void RotateAntiClockwise()
+    {
+        SpawnedObjectDescriptionScreen descScreen = _uiScreens[(int)InterractionManagerState.SelectObject].GetComponent<SpawnedObjectDescriptionScreen>();
+        if (!descScreen)
+            throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
+
+        Quaternion rotation = lastSelectedObject.transform.rotation;
+        rotation.eulerAngles = new Vector3(rotation.eulerAngles.x - 30, rotation.eulerAngles.y, rotation.eulerAngles.z);
+        lastSelectedObject.transform.rotation = rotation;
+
+        lastSelectedObject.GetComponent<SpawnedObject>().Rotation = lastSelectedObject.transform.rotation;
+    }
+
+    public void Upscale()
+    {
+        SpawnedObjectDescriptionScreen descScreen = _uiScreens[(int)InterractionManagerState.SelectObject].GetComponent<SpawnedObjectDescriptionScreen>();
+        if (!descScreen)
+            throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
+
+        lastSelectedObject.transform.localScale = new Vector3(lastSelectedObject.transform.localScale.x * 1.2f,
+            lastSelectedObject.transform.localScale.y * 1.2f, lastSelectedObject.transform.localScale.z * 1.2f);
+
+        lastSelectedObject.GetComponent<SpawnedObject>().Scale = lastSelectedObject.transform.localScale;
+    }
+
+    public void Downscale()
+    {
+        SpawnedObjectDescriptionScreen descScreen = _uiScreens[(int)InterractionManagerState.SelectObject].GetComponent<SpawnedObjectDescriptionScreen>();
+        if (!descScreen)
+            throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
+
+        lastSelectedObject.transform.localScale = new Vector3(lastSelectedObject.transform.localScale.x * 0.8f,
+            lastSelectedObject.transform.localScale.y * 0.8f, lastSelectedObject.transform.localScale.z * 0.8f);
+
+        lastSelectedObject.GetComponent<SpawnedObject>().Scale = lastSelectedObject.transform.localScale;
     }
 }

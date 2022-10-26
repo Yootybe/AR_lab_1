@@ -8,6 +8,8 @@ public class SpawnedObjectDescriptionScreen : MonoBehaviour
 
     [SerializeField] private UnityEngine.UI.Text _objectNameText;
     [SerializeField] private UnityEngine.UI.Text _objectDescriptionText;
+    [SerializeField] private UnityEngine.UI.Text _objectRotation;
+    [SerializeField] private UnityEngine.UI.Text _objectScale;
 
     public void InitializeScreen()
     {
@@ -18,7 +20,19 @@ public class SpawnedObjectDescriptionScreen : MonoBehaviour
     {
         _objectNameText.text = obj.Name;
         _objectDescriptionText.text = obj.Description;
+        _objectScale.text = obj.Scale.x.ToString();
+        _objectRotation.text = obj.Rotation.x.ToString();
         _descriptionPanel.SetActive(true);
+    }
+
+    public void UpdateDescription(SpawnedObject obj, bool isNext)
+    {
+        _objectDescriptionText.text = obj.UpdateDescription(isNext);
+    }
+
+    public void UpdateRotation(SpawnedObject obj, bool isNext)
+    {
+        _objectDescriptionText.text = obj.UpdateDescription(isNext);
     }
 
     public void BackToMain()
