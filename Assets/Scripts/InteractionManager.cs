@@ -261,9 +261,17 @@ public class InteractionManager : MonoBehaviour
         if (!descScreen)
             throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
 
-        Quaternion rotation = lastSelectedObject.transform.rotation;
-        rotation.eulerAngles = new Vector3(rotation.eulerAngles.x + 30, rotation.eulerAngles.y, rotation.eulerAngles.z);
-        lastSelectedObject.transform.rotation = rotation;
+        float angle = lastSelectedObject.GetComponent<SpawnedObject>().RotationAngle;
+        if (angle == 330.0f)
+            angle = 0.0f;
+        else
+            angle += 30.0f;
+
+        lastSelectedObject.GetComponent<SpawnedObject>().RotationAngle = angle;
+
+        lastSelectedObject.transform.Rotate(30.0f, 0.0f, 0.0f);
+
+        descScreen.UpdateRotationText(angle);
 
         lastSelectedObject.GetComponent<SpawnedObject>().Rotation = lastSelectedObject.transform.rotation;
     }
@@ -274,9 +282,17 @@ public class InteractionManager : MonoBehaviour
         if (!descScreen)
             throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
 
-        Quaternion rotation = lastSelectedObject.transform.rotation;
-        rotation.eulerAngles = new Vector3(rotation.eulerAngles.x - 30, rotation.eulerAngles.y, rotation.eulerAngles.z);
-        lastSelectedObject.transform.rotation = rotation;
+        float angle = lastSelectedObject.GetComponent<SpawnedObject>().RotationAngle;
+        if (angle == 0.0f)
+            angle = 330.0f;
+        else
+            angle -= 30.0f;
+
+        lastSelectedObject.GetComponent<SpawnedObject>().RotationAngle = angle;
+
+        lastSelectedObject.transform.Rotate(-30.0f, 0.0f, 0.0f);
+
+        descScreen.UpdateRotationText(angle);
 
         lastSelectedObject.GetComponent<SpawnedObject>().Rotation = lastSelectedObject.transform.rotation;
     }
@@ -290,6 +306,8 @@ public class InteractionManager : MonoBehaviour
         lastSelectedObject.transform.localScale = new Vector3(lastSelectedObject.transform.localScale.x * 1.2f,
             lastSelectedObject.transform.localScale.y * 1.2f, lastSelectedObject.transform.localScale.z * 1.2f);
 
+        descScreen.UpdateScaleText(lastSelectedObject.transform.localScale);
+
         lastSelectedObject.GetComponent<SpawnedObject>().Scale = lastSelectedObject.transform.localScale;
     }
 
@@ -301,6 +319,8 @@ public class InteractionManager : MonoBehaviour
 
         lastSelectedObject.transform.localScale = new Vector3(lastSelectedObject.transform.localScale.x * 0.8f,
             lastSelectedObject.transform.localScale.y * 0.8f, lastSelectedObject.transform.localScale.z * 0.8f);
+
+        descScreen.UpdateScaleText(lastSelectedObject.transform.localScale);
 
         lastSelectedObject.GetComponent<SpawnedObject>().Scale = lastSelectedObject.transform.localScale;
     }

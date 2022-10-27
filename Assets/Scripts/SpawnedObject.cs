@@ -53,6 +53,13 @@ public class SpawnedObject : MonoBehaviour
         }
     }
 
+    private float rotationAngle = 0.0f;
+    public float RotationAngle
+    {
+        get { return rotationAngle; }
+        set { rotationAngle = value; }
+    }
+
     private Quaternion rotation;
     public Quaternion Rotation
     {

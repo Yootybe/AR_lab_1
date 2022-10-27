@@ -21,7 +21,7 @@ public class SpawnedObjectDescriptionScreen : MonoBehaviour
         _objectNameText.text = obj.Name;
         _objectDescriptionText.text = obj.Description;
         _objectScale.text = obj.Scale.x.ToString();
-        _objectRotation.text = obj.Rotation.x.ToString();
+        _objectRotation.text = obj.Rotation.eulerAngles.x.ToString();
         _descriptionPanel.SetActive(true);
     }
 
@@ -30,9 +30,14 @@ public class SpawnedObjectDescriptionScreen : MonoBehaviour
         _objectDescriptionText.text = obj.UpdateDescription(isNext);
     }
 
-    public void UpdateRotation(SpawnedObject obj, bool isNext)
+    public void UpdateRotationText(float angle)
     {
-        _objectDescriptionText.text = obj.UpdateDescription(isNext);
+        _objectRotation.text = angle.ToString();
+    }
+
+    public void UpdateScaleText(Vector3 scale)
+    {
+        _objectScale.text = scale.x.ToString();
     }
 
     public void BackToMain()
