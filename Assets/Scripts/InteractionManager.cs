@@ -27,6 +27,7 @@ public class InteractionManager : MonoBehaviour
     private ARRaycastManager _aRRaycastManager;
     private List<ARRaycastHit> _raycastHits;
     private GameObject _targetMarker;
+    private GameObject _selectedObject;
 
     private void Awake()
     {
@@ -79,6 +80,7 @@ public class InteractionManager : MonoBehaviour
     public void DisplayDefaultScreen()
     {
         _currentState = InterractionManagerState.Default;
+        _targetMarker.SetActive(false);
         UpdateUIScreens();
     }
 
@@ -86,17 +88,29 @@ public class InteractionManager : MonoBehaviour
     {
         if (Input.touchCount > 0)
         {
-            Touch touch = Input.GetTouch(0);
-            bool isOverUI = touch.position.IsPointOverUIObject();
+            Touch touch1 = Input.GetTouch(0);
+            bool isOverUI = touch1.position.IsPointOverUIObject();
 
             switch (_currentState)
             {
                 case InterractionManagerState.SpawnObject:
-                    ProcessTouchSpawnObject(touch, isOverUI);
+                    ProcessTouchSpawnObject(touch1, isOverUI);
                     break;
 
                 case InterractionManagerState.SelectObject:
-                    ProcessTouchSelectObject(touch, isOverUI);
+                    // if there;s only one touch, we try to select object
+                    if (Input.touchCount == 1)
+                    {
+                        // try to select object, if it wasn't possible, try to move it
+                        if (!ProcessTouchSelectObject(touch1, isOverUI))
+                        {
+                            MoveSelectedObject(touch1);
+                        }
+                    }
+                    else if (Input.touchCount == 2)
+                    {
+                        RotateSelectedObject(touch1, Input.GetTouch(1));
+                    }
                     break;
                 default:
                     break;
@@ -105,18 +119,51 @@ public class InteractionManager : MonoBehaviour
         //ProcessFirstTouch(Input.GetTouch(0));
     }
 
-    private void ProcessTouchSelectObject(Touch touch, bool isOverUI)
+    private void RotateSelectedObject(Touch touch1, Touch touch2)
+    {
+        if (!_selectedObject)
+            return;
+
+        if (touch1.phase == TouchPhase.Moved || touch2.phase == TouchPhase.Moved)
+        {
+            float distance = Vector2.Distance(touch1.position, touch2.position);
+            float distancePrev = Vector2.Distance(touch1.position - touch1.deltaPosition, touch2.position - touch2.deltaPosition);
+            float delta = distance - distancePrev;
+
+            if (Mathf.Abs(delta) > 0.0f)
+                delta *= 0.1f;
+            else
+                delta *= -0.1f;
+
+            _selectedObject.transform.rotation *= Quaternion.Euler(0.0f, delta, 0.0f);
+        }
+    }
+
+    private void MoveSelectedObject(Touch touch1)
+    {
+        if (!_selectedObject)
+            return;
+
+        if (touch1.phase == TouchPhase.Moved)
+        {
+            _aRRaycastManager.Raycast(touch1.position, _raycastHits, TrackableType.Planes);
+            _selectedObject.transform.position = _raycastHits[0].pose.position;
+        }
+    }
+
+    private bool ProcessTouchSelectObject(Touch touch, bool isOverUI)
     {
         if (touch.phase == TouchPhase.Began)
         {
             if (!isOverUI)
             {
-                TrySelectObject(touch.position);
+                return TrySelectObject(touch.position);
             }
         }
+        return false;
     }
 
-    private void TrySelectObject(Vector2 position)
+    private bool TrySelectObject(Vector2 position)
     {
         // fire a ray from the camera to the target screen position
         Ray ray = _arCamera.ScreenPointToRay(position);
@@ -127,8 +174,8 @@ public class InteractionManager : MonoBehaviour
             if (hitObject.collider.CompareTag("SpawnedObject"))
             {
                 // if we hit spawned object tag, try to get SpawnedObject from it and descriptionScreen from UI screen
-                GameObject selectedObject = hitObject.collider.gameObject;
-                SpawnedObject objectDescription = selectedObject.GetComponent<SpawnedObject>();
+                _selectedObject = hitObject.collider.gameObject;
+                SpawnedObject objectDescription = _selectedObject.GetComponent<SpawnedObject>();
 
                 if (!objectDescription)
                     throw new MissingComponentException(objectDescription.GetType().Name + " component not found!");
@@ -139,8 +186,11 @@ public class InteractionManager : MonoBehaviour
 
                 // then we call description screen to show info for the targeted object
                 descScreen.ShowObjectDescription(objectDescription);
+
+                return true;
             }
         }
+        return false;
     }
 
     private void ProcessTouchSpawnObject(Touch touch, bool overUI)
@@ -226,5 +276,11 @@ public class InteractionManager : MonoBehaviour
     public void SelectSpawnedObjectType(int objectType)
     {
         _spawnedObjectType = objectType;
+    }
+
+    public void ProcessFingerTap(int tapCount)
+    {
+        if (tapCount == 2)
+        DisplayDefaultScreen();
     }
 }
