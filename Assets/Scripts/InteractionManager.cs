@@ -98,6 +98,19 @@ public class InteractionManager : MonoBehaviour
                     break;
 
                 case InterractionManagerState.SelectObject:
+                    ProcessTouchSelectObject(touch1, isOverUI);
+                    break;
+                default:
+                    break;
+            }
+
+            /*switch (_currentState)
+            {
+                case InterractionManagerState.SpawnObject:
+                    ProcessTouchSpawnObject(touch1, isOverUI);
+                    break;
+
+                case InterractionManagerState.SelectObject:
                     // if there;s only one touch, we try to select object
                     if (Input.touchCount == 1)
                     {
@@ -114,9 +127,76 @@ public class InteractionManager : MonoBehaviour
                     break;
                 default:
                     break;
-            }
+            }*/
         }
         //ProcessFirstTouch(Input.GetTouch(0));
+    }
+
+    float currentRotationSpeed = 60.0f;
+    public void RotateAfterCircleSwipe()
+    {
+        if (_selectedObject && _currentState == InterractionManagerState.SelectObject)
+        {
+            while (currentRotationSpeed > 1.0f)
+            {
+                _selectedObject.transform.rotation *= Quaternion.Euler(0.0f, currentRotationSpeed, 0.0f);
+                currentRotationSpeed *= 0.75f;
+            }
+            currentRotationSpeed = 60.0f;
+        }
+    }
+
+    bool halfOfCross = false;
+    
+    public void CrossLeftToRight()
+    {
+        if (!halfOfCross)
+        {
+            halfOfCross = true;
+            return;
+
+        }
+
+        if (_selectedObject)
+        {
+            float transparency = 1.0f;
+            while (transparency > 0.0f)
+            {
+                transparency -= 0.025f;
+                ChengeTransparency(_selectedObject.GetComponent<Renderer>().material, transparency);
+            }
+            Destroy(_selectedObject);
+            halfOfCross = false;
+        }
+    }
+
+    public void CrossRightToLeft()
+    {
+        if (!halfOfCross)
+        {
+            halfOfCross = true;
+            return;
+
+        }
+
+        if (_selectedObject)
+        {
+            float transparency = 1.0f;
+            while (transparency > 0.0f)
+            {
+                transparency -= 0.025f;
+                ChengeTransparency(_selectedObject.GetComponent<Renderer>().material, transparency);
+            }
+            Destroy(_selectedObject);
+            halfOfCross = false;
+        }
+    }
+
+    private void ChengeTransparency(Material mat, float currentTransparency)
+    {
+        Color oldColor = mat.color;
+        Color newColor = new Color(oldColor.r, oldColor.g, oldColor.b, currentTransparency);
+        mat.SetColor("_Color", newColor);
     }
 
     private void RotateSelectedObject(Touch touch1, Touch touch2)
@@ -186,7 +266,6 @@ public class InteractionManager : MonoBehaviour
 
                 // then we call description screen to show info for the targeted object
                 descScreen.ShowObjectDescription(objectDescription);
-
                 return true;
             }
         }
