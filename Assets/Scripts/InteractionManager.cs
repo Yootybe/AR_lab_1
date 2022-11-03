@@ -29,6 +29,10 @@ public class InteractionManager : MonoBehaviour
     private GameObject _targetMarker;
     private GameObject _selectedObject;
 
+    private SpawnedObjectDescriptionScreen _descriptionScreen;
+
+    private List<Vector2> _points;
+
     private void Awake()
     {
         _aRRaycastManager = GetComponent<ARRaycastManager>();
@@ -73,7 +77,7 @@ public class InteractionManager : MonoBehaviour
 
     public void DisplayUIScreen(int screenNymber)
     {
-        _currentState = (InterractionManagerState) screenNymber;
+        _currentState = (InterractionManagerState)screenNymber;
         UpdateUIScreens();
     }
 
@@ -83,6 +87,8 @@ public class InteractionManager : MonoBehaviour
         _targetMarker.SetActive(false);
         UpdateUIScreens();
     }
+
+    bool fingerStartMove = false;
 
     private void Update()
     {
@@ -104,7 +110,7 @@ public class InteractionManager : MonoBehaviour
                     break;
             }
 
-            /*switch (_currentState)
+            switch (_currentState)
             {
                 case InterractionManagerState.SpawnObject:
                     ProcessTouchSpawnObject(touch1, isOverUI);
@@ -119,6 +125,23 @@ public class InteractionManager : MonoBehaviour
                         {
                             MoveSelectedObject(touch1);
                         }
+
+                        if (touch1.phase == TouchPhase.Moved && fingerStartMove)
+                        {
+                            _points.Add(touch1.position);
+                        }
+
+                        if (touch1.phase == TouchPhase.Ended)
+                        {
+                            fingerStartMove = false;
+                            RotateIfPointsOnCircle(_points);
+                        }
+
+
+                        if (touch1.phase == TouchPhase.Began)
+                            fingerStartMove = true;
+
+
                     }
                     else if (Input.touchCount == 2)
                     {
@@ -127,38 +150,88 @@ public class InteractionManager : MonoBehaviour
                     break;
                 default:
                     break;
-            }*/
+            }
         }
         //ProcessFirstTouch(Input.GetTouch(0));
+        if (startRotate)
+        {
+            _selectedObject.transform.rotation *= Quaternion.Euler(0.0f, currentRotationSpeed, 0.0f);
+            currentRotationSpeed *= 0.95f;
+
+            if (currentRotationSpeed < 1.0f)
+            {
+                startRotate = false;
+                currentRotationSpeed = 10000.0f;
+            }
+        }
+
+        if (crossedLeftToRight && crossedRightToLeft)
+        {
+            transparency -= 0.01f;
+            ChengeTransparency(_selectedObject.GetComponent<Renderer>().material, transparency);
+
+            if (transparency < 0.02f)
+            {
+                Destroy(_selectedObject);
+
+                _descriptionScreen.CloseObjectDescription();
+
+                crossedLeftToRight = false;
+                crossedRightToLeft = false;
+
+                transparency = 1.0f;
+            }
+        }
+
     }
 
-    float currentRotationSpeed = 60.0f;
+    private void RotateIfPointsOnCircle(List<Vector2> points)
+    {
+        // The bottom-left of the screen or window is at (0, 0). The top-right of the screen or window is at (Screen.width, Screen.height).
+
+    }
+
+    bool startRotate = false;
+    float currentRotationSpeed = 10000.0f;
     public void RotateAfterCircleSwipe()
     {
+        Debug.Log("RotateAfterCircleSwipe()");
         if (_selectedObject && _currentState == InterractionManagerState.SelectObject)
         {
-            while (currentRotationSpeed > 1.0f)
+            Debug.Log("RotateAfterCircleSwipe() 1");
+            // startRotate = true;
+            /* while (currentRotationSpeed > 1.0f)
             {
+                startRotate = true;
+                Debug.Log("RotateAfterCircleSwipe() 2");
                 _selectedObject.transform.rotation *= Quaternion.Euler(0.0f, currentRotationSpeed, 0.0f);
-                currentRotationSpeed *= 0.75f;
+                currentRotationSpeed *= 0.99f;
             }
-            currentRotationSpeed = 60.0f;
+            currentRotationSpeed = 10000000.0f; */
         }
     }
 
-    bool halfOfCross = false;
-    
+    bool crossedLeftToRight = false;
+    bool crossedRightToLeft = false;
+    //bool fullCross = false;
+
+    float transparency = 1.0f;
+
     public void CrossLeftToRight()
     {
-        if (!halfOfCross)
+        Debug.Log("CrossLeftToRight()");
+        if (!crossedLeftToRight)
         {
-            halfOfCross = true;
+            crossedLeftToRight = true;
             return;
-
         }
 
-        if (_selectedObject)
+        Debug.Log("CrossLeftToRight() 1");
+
+        /*if (_selectedObject)
         {
+
+            Debug.Log("CrossLeftToRight() 2");
             float transparency = 1.0f;
             while (transparency > 0.0f)
             {
@@ -166,21 +239,26 @@ public class InteractionManager : MonoBehaviour
                 ChengeTransparency(_selectedObject.GetComponent<Renderer>().material, transparency);
             }
             Destroy(_selectedObject);
-            halfOfCross = false;
-        }
+            crossedLeftToRight = false;
+        }*/
     }
 
     public void CrossRightToLeft()
     {
-        if (!halfOfCross)
-        {
-            halfOfCross = true;
-            return;
 
+        Debug.Log("CrossRightToLeft()");
+        if (!crossedRightToLeft)
+        {
+            
+            crossedRightToLeft = true;
+            return;
         }
 
-        if (_selectedObject)
+        Debug.Log("CrossRightToLeft() 1");
+
+        /*if (_selectedObject)
         {
+            Debug.Log("CrossRightToLeft() 2");
             float transparency = 1.0f;
             while (transparency > 0.0f)
             {
@@ -188,8 +266,8 @@ public class InteractionManager : MonoBehaviour
                 ChengeTransparency(_selectedObject.GetComponent<Renderer>().material, transparency);
             }
             Destroy(_selectedObject);
-            halfOfCross = false;
-        }
+            crossedRightToLeft = false;
+        }*/
     }
 
     private void ChengeTransparency(Material mat, float currentTransparency)
@@ -206,6 +284,7 @@ public class InteractionManager : MonoBehaviour
 
         if (touch1.phase == TouchPhase.Moved || touch2.phase == TouchPhase.Moved)
         {
+            
             float distance = Vector2.Distance(touch1.position, touch2.position);
             float distancePrev = Vector2.Distance(touch1.position - touch1.deltaPosition, touch2.position - touch2.deltaPosition);
             float delta = distance - distancePrev;
@@ -263,6 +342,8 @@ public class InteractionManager : MonoBehaviour
                 SpawnedObjectDescriptionScreen descScreen = _uiScreens[(int)InterractionManagerState.SelectObject].GetComponent<SpawnedObjectDescriptionScreen>();
                 if (!descScreen)
                     throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
+
+                _descriptionScreen = descScreen;
 
                 // then we call description screen to show info for the targeted object
                 descScreen.ShowObjectDescription(objectDescription);
