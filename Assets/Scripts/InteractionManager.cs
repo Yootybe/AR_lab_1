@@ -188,7 +188,43 @@ public class InteractionManager : MonoBehaviour
     private void RotateIfPointsOnCircle(List<Vector2> points)
     {
         // The bottom-left of the screen or window is at (0, 0). The top-right of the screen or window is at (Screen.width, Screen.height).
+        Vector2 firstPoint = points[0];
+        Vector2 lastPoint = points[points.Count - 1];
 
+        float radiusX = (firstPoint.x - lastPoint.x) / 2;
+        float radiusY = (firstPoint.y - lastPoint.y) / 2;
+
+        if (radiusX < 0.0f)
+            radiusX *= -1.0f;
+
+        if (radiusY < 0.0f)
+            radiusY *= -1.0f;
+
+        float radius = 0.0f;
+
+        if (radiusX > radiusY)
+            radius = radiusX;
+        else
+            radius = radiusY;
+
+        float radius2 = radius * radius;
+
+        float centerX = firstPoint.x + radiusX;
+        float centerY = firstPoint.y + radiusY;
+
+        for (int i = 1; i < points.Count - 1; i++)
+        {
+            bool moreThanRad = (points[i].x - centerX) * (points[i].x - centerX) +
+                 (points[i].y - centerY) * (points[i].y - centerY) >= radius2 + 100.0f;
+
+            bool lessThanRad = (points[i].x - centerX) * (points[i].x - centerX) +
+                 (points[i].y - centerY) * (points[i].y - centerY) <= radius2 + 100.0f;
+
+            if (!(moreThanRad || lessThanRad))
+                return;
+        }
+
+        startRotate = true;
     }
 
     bool startRotate = false;
