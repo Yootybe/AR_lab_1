@@ -1,9 +1,9 @@
 {
-    "m_SelectedDeviceId": "R52N503KJCJ",
+    "m_SelectedDeviceId": "R52N50KJC3V",
     "m_SelectedPackage": {
-        "deviceId": "",
-        "name": "",
-        "processId": 0,
+        "deviceId": "R52N50KJC3V",
+        "name": "com.DefaultCompany.AR_lab_1",
+        "processId": 10205,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -59,25 +59,43 @@
         {
             "deviceId": "R52N50KJC3V",
             "name": "com.DefaultCompany.AR_lab_1",
-            "processId": 28154,
+            "processId": 5415,
+            "exited": true
+        },
+        {
+            "deviceId": "R52N50KJC3V",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 6881,
+            "exited": true
+        },
+        {
+            "deviceId": "R52N50KJC3V",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 7855,
+            "exited": true
+        },
+        {
+            "deviceId": "R52N50KJC3V",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 8720,
+            "exited": true
+        },
+        {
+            "deviceId": "R52N50KJC3V",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 9189,
+            "exited": true
+        },
+        {
+            "deviceId": "R52N50KJC3V",
+            "name": "com.sec.android.app.launcher",
+            "processId": 5901,
             "exited": false
         },
         {
             "deviceId": "R52N50KJC3V",
             "name": "com.DefaultCompany.AR_lab_1",
-            "processId": 29307,
-            "exited": false
-        },
-        {
-            "deviceId": "R52N50KJC3V",
-            "name": "com.DefaultCompany.AR_lab_1",
-            "processId": 30667,
-            "exited": false
-        },
-        {
-            "deviceId": "R52N50KJC3V",
-            "name": "com.DefaultCompany.AR_lab_1",
-            "processId": 810,
+            "processId": 10205,
             "exited": false
         },
         {

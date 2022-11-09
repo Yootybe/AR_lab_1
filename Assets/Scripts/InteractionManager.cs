@@ -42,6 +42,8 @@ public class InteractionManager : MonoBehaviour
         _stateInitializationAction[(int)InterractionManagerState.Default] = InitializeDefaultScreen;
         _stateInitializationAction[(int)InterractionManagerState.SpawnObject] = InitializeObjectSpawner;
         _stateInitializationAction[(int)InterractionManagerState.SelectObject] = InitializeObjectSelection;
+
+        _points = new List<Vector2>();
     }
 
     private void Start()
@@ -121,27 +123,29 @@ public class InteractionManager : MonoBehaviour
                     if (Input.touchCount == 1)
                     {
                         // try to select object, if it wasn't possible, try to move it
-                        if (!ProcessTouchSelectObject(touch1, isOverUI))
+                        /*if (!ProcessTouchSelectObject(touch1, isOverUI))
                         {
                             MoveSelectedObject(touch1);
-                        }
+                        }*/
 
+                        
                         if (touch1.phase == TouchPhase.Moved && fingerStartMove)
                         {
+                            Debug.Log("_points.Add(touch1.position)");
                             _points.Add(touch1.position);
                         }
 
-                        if (touch1.phase == TouchPhase.Ended)
+                        if (touch1.phase == TouchPhase.Ended && fingerStartMove)
                         {
+                            Debug.Log("touch1.phase == TouchPhase.Ended");
                             fingerStartMove = false;
                             RotateIfPointsOnCircle(_points);
                         }
 
 
                         if (touch1.phase == TouchPhase.Began)
-                            fingerStartMove = true;
-
-
+                                fingerStartMove = true;
+                        
                     }
                     else if (Input.touchCount == 2)
                     {
@@ -163,6 +167,8 @@ public class InteractionManager : MonoBehaviour
                 startRotate = false;
                 currentRotationSpeed = 10000.0f;
             }
+
+            _points.Clear();
         }
 
         if (crossedLeftToRight && crossedRightToLeft)
@@ -187,41 +193,85 @@ public class InteractionManager : MonoBehaviour
 
     private void RotateIfPointsOnCircle(List<Vector2> points)
     {
+        Debug.Log("RotateIfPointsOnCircle(List<Vector2> points) 1");
+
         // The bottom-left of the screen or window is at (0, 0). The top-right of the screen or window is at (Screen.width, Screen.height).
         Vector2 firstPoint = points[0];
+
+        Debug.Log("RotateIfPointsOnCircle(List<Vector2> points) 2");
         Vector2 lastPoint = points[points.Count - 1];
 
-        float radiusX = (firstPoint.x - lastPoint.x) / 2;
-        float radiusY = (firstPoint.y - lastPoint.y) / 2;
+        Debug.Log("RotateIfPointsOnCircle(List<Vector2> points) 3");
 
-        if (radiusX < 0.0f)
-            radiusX *= -1.0f;
+        float centerX = (firstPoint.x + lastPoint.x) / 2;
+        float centerY = (firstPoint.y + lastPoint.y) / 2;
 
-        if (radiusY < 0.0f)
-            radiusY *= -1.0f;
+        float trueRadius2 = ((lastPoint.x - firstPoint.x) * (lastPoint.x - firstPoint.x) + (lastPoint.y - firstPoint.y) * (lastPoint.y - firstPoint.y)) / 4;
 
-        float radius = 0.0f;
+        Debug.Log("RotateIfPointsOnCircle(List<Vector2> points) 4");
+        float trueRadius = (float)Math.Sqrt(trueRadius2);
 
-        if (radiusX > radiusY)
-            radius = radiusX;
-        else
-            radius = radiusY;
+        //float radiusX = (firstPoint.x - lastPoint.x) / 2;
+        //float radiusY = (firstPoint.y - lastPoint.y) / 2;
 
-        float radius2 = radius * radius;
+        //if (radiusX < 0.0f)
+        // radiusX *= -1.0f;
 
-        float centerX = firstPoint.x + radiusX;
-        float centerY = firstPoint.y + radiusY;
+        // if (radiusY < 0.0f)
+        //radiusY *= -1.0f;
 
-        for (int i = 1; i < points.Count - 1; i++)
+        // float radius = 0.0f;
+
+        //if (radiusX > radiusY)
+        //radius = radiusX;
+        // else
+        // radius = radiusY;
+
+        //float radius2 = radius * radius;
+
+        //float centerX = firstPoint.x + radiusX;
+        //float centerY = firstPoint.y + radiusY;
+
+        for (int i = 0; i < points.Count; i++)
         {
+
+            float radius2 = (points[i].x - centerX) * (points[i].x - centerX) +
+                 (points[i].y - centerY) * (points[i].y - centerY);
+
+            float deltaRadPlus2 = (trueRadius + trueRadius * 0.85f) * (trueRadius + trueRadius * 0.85f);
+            float deltaRadMinus2 = (trueRadius - trueRadius * 0.85f) * (trueRadius - trueRadius * 0.85f);
+
+            //Debug.Log(radius2.ToString());
+            //Debug.Log(deltaRadPlus2.ToString());
+            //Debug.Log(deltaRadMinus2.ToString());
+
+            Debug.Log("trueRadius " + trueRadius.ToString());
+            Debug.Log("firstPoint.x " + firstPoint.x.ToString());
+            Debug.Log("firstPoint.y " + firstPoint.y.ToString());
+            Debug.Log("lastPoint.x " + lastPoint.x.ToString());
+            Debug.Log("lastPoint.y " + lastPoint.y.ToString());
+            Debug.Log("centerX " + centerX.ToString());
+            Debug.Log("centerY " + centerY.ToString());
+            Debug.Log("points[i].x " + points[i].x.ToString());
+            Debug.Log("points[i].y " + points[i].y.ToString());
+
             bool moreThanRad = (points[i].x - centerX) * (points[i].x - centerX) +
-                 (points[i].y - centerY) * (points[i].y - centerY) >= radius2 + 100.0f;
+                 (points[i].y - centerY) * (points[i].y - centerY) <= deltaRadPlus2;
 
             bool lessThanRad = (points[i].x - centerX) * (points[i].x - centerX) +
-                 (points[i].y - centerY) * (points[i].y - centerY) <= radius2 + 100.0f;
+                 (points[i].y - centerY) * (points[i].y - centerY) >= deltaRadMinus2;
 
-            if (!(moreThanRad || lessThanRad))
+            //Debug.Log("for (int i = 1; i < points.Count - 1; i++)");
+
+            if (!(moreThanRad && lessThanRad))
+            {
+                //Debug.Log("i " + i.ToString());
+                //if ((float)i > (float)((points.Count - 2) * 0.65f))
+                    break;
+
+                Debug.Log("!(moreThanRad || lessThanRad)");
                 return;
+            }
         }
 
         startRotate = true;
@@ -231,10 +281,10 @@ public class InteractionManager : MonoBehaviour
     float currentRotationSpeed = 10000.0f;
     public void RotateAfterCircleSwipe()
     {
-        Debug.Log("RotateAfterCircleSwipe()");
+        //Debug.Log("RotateAfterCircleSwipe()");
         if (_selectedObject && _currentState == InterractionManagerState.SelectObject)
         {
-            Debug.Log("RotateAfterCircleSwipe() 1");
+            //Debug.Log("RotateAfterCircleSwipe() 1");
             // startRotate = true;
             /* while (currentRotationSpeed > 1.0f)
             {
@@ -255,14 +305,14 @@ public class InteractionManager : MonoBehaviour
 
     public void CrossLeftToRight()
     {
-        Debug.Log("CrossLeftToRight()");
+        //Debug.Log("CrossLeftToRight()");
         if (!crossedLeftToRight)
         {
             crossedLeftToRight = true;
             return;
         }
 
-        Debug.Log("CrossLeftToRight() 1");
+        //Debug.Log("CrossLeftToRight() 1");
 
         /*if (_selectedObject)
         {
@@ -282,7 +332,7 @@ public class InteractionManager : MonoBehaviour
     public void CrossRightToLeft()
     {
 
-        Debug.Log("CrossRightToLeft()");
+        //Debug.Log("CrossRightToLeft()");
         if (!crossedRightToLeft)
         {
             
@@ -290,7 +340,7 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("CrossRightToLeft() 1");
+        //Debug.Log("CrossRightToLeft() 1");
 
         /*if (_selectedObject)
         {
