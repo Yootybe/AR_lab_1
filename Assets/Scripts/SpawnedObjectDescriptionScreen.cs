@@ -13,6 +13,10 @@ public class SpawnedObjectDescriptionScreen : MonoBehaviour
     {
         _descriptionPanel.SetActive(false);
     }
+    public void CloseObjectDescription()
+    {
+        _descriptionPanel.SetActive(false);
+    }
 
     public void ShowObjectDescription(SpawnedObject obj)
     {

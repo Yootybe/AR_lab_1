@@ -29,6 +29,11 @@ public class InteractionManager : MonoBehaviour
     private GameObject _targetMarker;
     private GameObject _selectedObject;
 
+    private List<Vector2> _firstLine;
+    private List<Vector2> _secondLine;
+
+    private SpawnedObjectDescriptionScreen _descriptionScreen;
+
     private void Awake()
     {
         _aRRaycastManager = GetComponent<ARRaycastManager>();
@@ -38,6 +43,9 @@ public class InteractionManager : MonoBehaviour
         _stateInitializationAction[(int)InterractionManagerState.Default] = InitializeDefaultScreen;
         _stateInitializationAction[(int)InterractionManagerState.SpawnObject] = InitializeObjectSpawner;
         _stateInitializationAction[(int)InterractionManagerState.SelectObject] = InitializeObjectSelection;
+
+        _firstLine = new List<Vector2>();
+        _secondLine = new List<Vector2>();
     }
 
     private void Start()
@@ -98,25 +106,202 @@ public class InteractionManager : MonoBehaviour
                     break;
 
                 case InterractionManagerState.SelectObject:
-                    // if there;s only one touch, we try to select object
-                    if (Input.touchCount == 1)
                     {
-                        // try to select object, if it wasn't possible, try to move it
-                        if (!ProcessTouchSelectObject(touch1, isOverUI))
+                        // if there;s only one touch, we try to select object
+                        if (Input.touchCount == 1)
                         {
-                            MoveSelectedObject(touch1);
+                            // try to select object, if it wasn't possible, try to move it
+                            if (!ProcessTouchSelectObject(touch1, isOverUI))
+                            {
+                                //MoveSelectedObject(touch1);
+                            }
                         }
-                    }
-                    else if (Input.touchCount == 2)
-                    {
-                        RotateSelectedObject(touch1, Input.GetTouch(1));
+
+                        if (touch1.phase == TouchPhase.Ended && fingerStartMove)
+                        {
+                            fingerStartMove = false;
+                            if (!firstLine)
+                            {
+                                _firstLine.Add(touch1.position);
+                                firstLine = true;
+                            }
+                            else
+                            {
+                                _secondLine.Add(touch1.position);
+                                secondLine = true;
+
+                                linesMeet = isLinesMeet(_firstLine, _secondLine);
+                            }
+                        }
+
+                        if (touch1.phase == TouchPhase.Began)
+                        {
+                            fingerStartMove = true;
+
+                            if (!firstLine)
+                            {
+                                _firstLine.Add(touch1.position);
+                            }
+                            else
+                            {
+                                _secondLine.Add(touch1.position);
+                            }
+                        }
+                            
                     }
                     break;
                 default:
                     break;
             }
         }
-        //ProcessFirstTouch(Input.GetTouch(0));
+
+        if (linesMeet)
+        {
+            transparency -= 0.01f;
+            ChengeTransparency(_selectedObject.GetComponent<Renderer>().material, transparency);
+
+            if (transparency < 0.02f)
+            {
+                Destroy(_selectedObject);
+
+                _descriptionScreen.CloseObjectDescription();
+
+                firstLine = false;
+                secondLine = false;
+                linesMeet = false;
+
+                transparency = 1.0f;
+            }
+        }
+
+        if (currentRotationSpeed > 0.0f)
+        {
+
+            if (rotatingRight)
+                _selectedObject.transform.rotation *= Quaternion.Euler(0.0f, currentRotationSpeed, 0.0f);
+
+            if (rotatingLeft)
+                _selectedObject.transform.rotation *= Quaternion.Euler(0.0f, -currentRotationSpeed, 0.0f);
+
+            currentRotationSpeed *= 0.95f;
+
+            if (currentRotationSpeed < 1.0f)
+            {
+                currentRotationSpeed = 0.0f;
+                rotatingRight = false;
+                rotatingLeft = false;
+            }
+        }
+    }
+
+    bool fingerStartMove = false;
+
+    bool firstLine = false;
+    bool secondLine = false;
+
+    bool linesMeet = false;
+
+    private bool isLinesMeet(List<Vector2> firstLine, List<Vector2> secondLine)
+    {
+        float x1 = firstLine[0].x; float y1 = firstLine[0].y;
+        float x2 = firstLine[1].x; float y2 = firstLine[1].y;
+
+        float x3 = secondLine[0].x; float y3 = secondLine[0].y;
+        float x4 = secondLine[1].x; float y4 = secondLine[1].y;
+
+        _firstLine.Clear(); _secondLine.Clear();
+
+        float tg1 = (x2 - x1) / (y2 - y1);
+        float tg2 = (x4 - x3) / (y4 - y3);
+
+        if (tg1 > tg2)
+        {
+            if (tg1 - tg2 < 0.1f)
+                return false;
+        }
+        else
+        {
+            if (tg1 - tg2 < -0.1f)
+                return false;
+        }
+
+        return true;
+    }
+
+    float currentRotationSpeed = 0.0f;
+
+    bool rotatingRight = false;
+    bool rotatingLeft = false;
+
+    public void rotateRight()
+    {
+        fingerStartMove = false;
+        firstLine = false;
+        secondLine = false;
+
+        if (_firstLine.Count > 0)
+            _firstLine.Clear();
+
+        if (_secondLine.Count > 0)
+            _secondLine.Clear();
+
+
+        if (rotatingRight)
+            currentRotationSpeed += 500.0f;
+
+        if (!rotatingRight && currentRotationSpeed == 0.0f)
+        {
+            currentRotationSpeed += 500.0f;
+            rotatingRight = true;
+        }
+
+        if (rotatingLeft)
+        {
+            if (currentRotationSpeed < 500.0f)
+            {
+                currentRotationSpeed = 500.0f - currentRotationSpeed;
+                rotatingLeft = false;
+            }
+            else
+            {
+                currentRotationSpeed -= 500.0f;
+            }
+        }
+    }
+
+    public void rotateLeft()
+    {
+        fingerStartMove = false;
+        firstLine = false;
+        secondLine = false;
+
+        if (_firstLine.Count > 0)
+            _firstLine.Clear();
+
+        if (_secondLine.Count > 0)
+            _secondLine.Clear();
+
+        if (rotatingLeft)
+            currentRotationSpeed += 500.0f;
+
+        if (!rotatingLeft && currentRotationSpeed == 0.0f)
+        {
+            currentRotationSpeed += 500.0f;
+            rotatingLeft = true;
+        }
+
+        if (rotatingRight)
+        {
+            if (currentRotationSpeed < 500.0f)
+            {
+                currentRotationSpeed = 500.0f - currentRotationSpeed;
+                rotatingRight = false;
+            }
+            else
+            {
+                currentRotationSpeed -= 500.0f;
+            }
+        }
     }
 
     private void RotateSelectedObject(Touch touch1, Touch touch2)
@@ -137,6 +322,14 @@ public class InteractionManager : MonoBehaviour
 
             _selectedObject.transform.rotation *= Quaternion.Euler(0.0f, delta, 0.0f);
         }
+    }
+
+    float transparency = 1.0f;
+    private void ChengeTransparency(Material mat, float currentTransparency)
+    {
+        Color oldColor = mat.color;
+        Color newColor = new Color(oldColor.r, oldColor.g, oldColor.b, currentTransparency);
+        mat.SetColor("_Color", newColor);
     }
 
     private void MoveSelectedObject(Touch touch1)
@@ -183,6 +376,8 @@ public class InteractionManager : MonoBehaviour
                 SpawnedObjectDescriptionScreen descScreen = _uiScreens[(int)InterractionManagerState.SelectObject].GetComponent<SpawnedObjectDescriptionScreen>();
                 if (!descScreen)
                     throw new MissingComponentException(descScreen.GetType().Name + " component not found!");
+
+                _descriptionScreen = descScreen;
 
                 // then we call description screen to show info for the targeted object
                 descScreen.ShowObjectDescription(objectDescription);
