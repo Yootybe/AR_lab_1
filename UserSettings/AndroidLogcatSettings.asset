@@ -1,9 +1,9 @@
 {
-    "m_SelectedDeviceId": "R52N50KJC3V",
+    "m_SelectedDeviceId": "R52N503KJCJ",
     "m_SelectedPackage": {
-        "deviceId": "R52N50KJC3V",
+        "deviceId": "R52N503KJCJ",
         "name": "com.DefaultCompany.AR_lab_1",
-        "processId": 810,
+        "processId": 27650,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -78,6 +78,78 @@
             "deviceId": "R52N50KJC3V",
             "name": "com.DefaultCompany.AR_lab_1",
             "processId": 810,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.sec.android.app.launcher",
+            "processId": 5894,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 19264,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 21727,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KJCJ",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 20984,
+            "exited": true
+        },
+        {
+            "deviceId": "R52N503KJCJ",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 21625,
+            "exited": true
+        },
+        {
+            "deviceId": "R52N503KJCJ",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 22384,
+            "exited": true
+        },
+        {
+            "deviceId": "R52N503KJCJ",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 23152,
+            "exited": true
+        },
+        {
+            "deviceId": "R52N503KJCJ",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 23643,
+            "exited": true
+        },
+        {
+            "deviceId": "R52N503KJCJ",
+            "name": "com.sec.android.app.launcher",
+            "processId": 5667,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KJCJ",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 25848,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KJCJ",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 26586,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KJCJ",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 27650,
             "exited": false
         }
     ],

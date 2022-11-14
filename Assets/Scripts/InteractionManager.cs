@@ -83,6 +83,16 @@ public class InteractionManager : MonoBehaviour
     {
         _currentState = (InterractionManagerState) screenNymber;
         UpdateUIScreens();
+
+        firstLine = false;
+        secondLine = false;
+        linesMeet = false;
+
+        if (_firstLine.Count > 0)
+            _firstLine.Clear();
+
+        if (_secondLine.Count > 0)
+            _secondLine.Clear();
     }
 
     public void DisplayDefaultScreen()
@@ -90,6 +100,16 @@ public class InteractionManager : MonoBehaviour
         _currentState = InterractionManagerState.Default;
         _targetMarker.SetActive(false);
         UpdateUIScreens();
+
+        firstLine = false;
+        secondLine = false;
+        linesMeet = false;
+
+        if (_firstLine.Count > 0)
+            _firstLine.Clear();
+
+        if (_secondLine.Count > 0)
+            _secondLine.Clear();
     }
 
     private void Update()
@@ -107,47 +127,59 @@ public class InteractionManager : MonoBehaviour
 
                 case InterractionManagerState.SelectObject:
                     {
+
+
                         // if there;s only one touch, we try to select object
                         if (Input.touchCount == 1)
                         {
                             // try to select object, if it wasn't possible, try to move it
-                            if (!ProcessTouchSelectObject(touch1, isOverUI))
+                            //if (ProcessTouchSelectObject(touch1, isOverUI))
+                            //{
+                            //MoveSelectedObject(touch1);
+
+                            //}
+
+                            bool objectSelected = ProcessTouchSelectObject(touch1, isOverUI);
+
+
+                            if (touch1.phase == TouchPhase.Ended && fingerStartMove && !objectSelected)
                             {
-                                //MoveSelectedObject(touch1);
+                                Debug.Log("touch1.phase == TouchPhase.Ended && fingerStartMove 1");
+                                fingerStartMove = false;
+                                if (!firstLine)
+                                {
+                                    Debug.Log("touch1.phase == TouchPhase.Ended && fingerStartMove 2");
+                                    _firstLine.Add(touch1.position);
+                                    firstLine = true;
+                                }
+                                else
+                                {
+                                    Debug.Log("touch1.phase == TouchPhase.Ended && fingerStartMove 3");
+                                    _secondLine.Add(touch1.position);
+                                    secondLine = true;
+
+                                    linesMeet = isLinesMeet(_firstLine, _secondLine);
+                                }
                             }
+
+                            if (touch1.phase == TouchPhase.Began && !objectSelected)
+                            {
+                                Debug.Log("touch1.phase == TouchPhase.Began 1");
+                                fingerStartMove = true;
+
+                                if (!firstLine)
+                                {
+                                    Debug.Log("touch1.phase == TouchPhase.Began 2");
+                                    _firstLine.Add(touch1.position);
+                                }
+                                else
+                                {
+                                    Debug.Log("touch1.phase == TouchPhase.Began 3");
+                                    _secondLine.Add(touch1.position);
+                                }
+                            }
+
                         }
-
-                        if (touch1.phase == TouchPhase.Ended && fingerStartMove)
-                        {
-                            fingerStartMove = false;
-                            if (!firstLine)
-                            {
-                                _firstLine.Add(touch1.position);
-                                firstLine = true;
-                            }
-                            else
-                            {
-                                _secondLine.Add(touch1.position);
-                                secondLine = true;
-
-                                linesMeet = isLinesMeet(_firstLine, _secondLine);
-                            }
-                        }
-
-                        if (touch1.phase == TouchPhase.Began)
-                        {
-                            fingerStartMove = true;
-
-                            if (!firstLine)
-                            {
-                                _firstLine.Add(touch1.position);
-                            }
-                            else
-                            {
-                                _secondLine.Add(touch1.position);
-                            }
-                        }
-                            
                     }
                     break;
                 default:
@@ -169,6 +201,12 @@ public class InteractionManager : MonoBehaviour
                 firstLine = false;
                 secondLine = false;
                 linesMeet = false;
+
+                if (_firstLine.Count > 0)
+                    _firstLine.Clear();
+
+                if (_secondLine.Count > 0)
+                    _secondLine.Clear();
 
                 transparency = 1.0f;
             }
@@ -201,13 +239,31 @@ public class InteractionManager : MonoBehaviour
 
     bool linesMeet = false;
 
-    private bool isLinesMeet(List<Vector2> firstLine, List<Vector2> secondLine)
+    private bool isLinesMeet(List<Vector2> firstLineV, List<Vector2> secondLineV)
     {
-        float x1 = firstLine[0].x; float y1 = firstLine[0].y;
-        float x2 = firstLine[1].x; float y2 = firstLine[1].y;
+        float x1 = firstLineV[0].x; float y1 = firstLineV[0].y;
+        float x2 = firstLineV[1].x; float y2 = firstLineV[1].y;
 
-        float x3 = secondLine[0].x; float y3 = secondLine[0].y;
-        float x4 = secondLine[1].x; float y4 = secondLine[1].y;
+        float x3 = secondLineV[0].x; float y3 = secondLineV[0].y;
+        float x4 = secondLineV[1].x; float y4 = secondLineV[1].y;
+
+        float firstLineLenght = (float)Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+        float secondLineLenght = (float)Math.Sqrt((x4 - x3) * (x4 - x3) + (y4 - y3) * (y4 - y3));
+
+        if (secondLineLenght < 100.0f || secondLineLenght < 100.0f)
+        {
+            firstLine = false;
+            secondLine = false;
+            linesMeet = false;
+
+            if (_firstLine.Count > 0)
+                _firstLine.Clear();
+
+            if (_secondLine.Count > 0)
+                _secondLine.Clear();
+
+            return false;
+        }
 
         _firstLine.Clear(); _secondLine.Clear();
 
