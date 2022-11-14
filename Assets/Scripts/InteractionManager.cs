@@ -7,6 +7,7 @@ using UnityEngine.XR.ARSubsystems;
 
 
 [RequireComponent(typeof(ARRaycastManager))]
+[RequireComponent(typeof(ARPlaneManager))]
 
 public class InteractionManager : MonoBehaviour
 {
@@ -18,26 +19,99 @@ public class InteractionManager : MonoBehaviour
     // Each interaction manager state correlate to UI Screens:
     // Default (0) - _uiScreens[0], SpawnObject(1) - _uiScreens[1] etc.
 
-    private enum InterractionManagerState { Default, SpawnObject, SelectObject }
+    private enum InterractionManagerState { Default, SpawnObject, SelectObject, ImageTracker }
     private InterractionManagerState _currentState;
     private UnityAction[] _stateInitializationAction;
     private int _spawnedObjectType = -1;
     private int _spawnedObjectCount = 0;
+    private bool _foundPlanes = false;
 
     private ARRaycastManager _aRRaycastManager;
     private List<ARRaycastHit> _raycastHits;
+    private ARPlaneManager _aRPlaneManager;
+    private ARAnchorManager _aRAnchorManager;
     private GameObject _targetMarker;
     private GameObject _selectedObject;
 
     private void Awake()
     {
+        _aRAnchorManager = GetComponent<ARAnchorManager>();
+        _aRAnchorManager.anchorsChanged += OnAnchorsChanged;
+
         _aRRaycastManager = GetComponent<ARRaycastManager>();
         _raycastHits = new List<ARRaycastHit>();
+
+        // setup plane manager and subscribe to planes changed event
+        _aRPlaneManager = GetComponent<ARPlaneManager>();
+        _aRPlaneManager.planesChanged += OnPlanesChanged;
 
         _stateInitializationAction = new UnityAction[Enum.GetNames(typeof(InterractionManagerState)).Length];
         _stateInitializationAction[(int)InterractionManagerState.Default] = InitializeDefaultScreen;
         _stateInitializationAction[(int)InterractionManagerState.SpawnObject] = InitializeObjectSpawner;
         _stateInitializationAction[(int)InterractionManagerState.SelectObject] = InitializeObjectSelection;
+        _stateInitializationAction[(int)InterractionManagerState.ImageTracker] = InitializeImageTracker;
+    }
+
+    private void InitializeImageTracker()
+    {
+        ImageTracker tracker = _uiScreens[(int)InterractionManagerState.ImageTracker].GetComponent<ImageTracker>();
+
+        if (!tracker)
+            throw new MissingComponentException(tracker.GetType().Name + " component not found!");
+
+        ShowPlanes(false);
+        tracker.Initialize();
+    }
+
+    private void ShowPlanes(bool state)
+    {
+        foreach (ARPlane plane in _aRPlaneManager.trackables)
+        {
+            plane.gameObject.SetActive(state);
+        }
+
+        _aRPlaneManager.enabled = state;
+    }
+
+    private void OnAnchorsChanged(ARAnchorsChangedEventArgs args)
+    {
+        foreach (ARAnchor anchor in args.added)
+        {
+            Debug.Log("Added anchor " + anchor.name);
+        }
+
+        foreach (ARAnchor anchor in args.updated)
+        {
+            Debug.Log("Updated anchor " + anchor.name);
+        }
+
+        foreach (ARAnchor anchor in args.removed)
+        {
+            Debug.Log("Removed anchor " + anchor.name);
+        }
+    }
+
+    private void OnPlanesChanged(ARPlanesChangedEventArgs args)
+    {
+        foreach (ARPlane plane in args.added)
+        {
+            Debug.Log("Added plane " + plane.name);
+            if (!_foundPlanes)
+            {
+                _foundPlanes = true;
+                UpdateUIScreens();
+            }
+        }
+
+        foreach (ARPlane plane in args.updated)
+        {
+            Debug.Log("Updated plane " + plane.name);
+        }
+
+        foreach (ARPlane plane in args.removed)
+        {
+            Debug.Log("Removed plane " + plane.name);
+        }
     }
 
     private void Start()
@@ -54,6 +128,9 @@ public class InteractionManager : MonoBehaviour
         // Reset current state
         _currentState = InterractionManagerState.Default;
         UpdateUIScreens();
+
+        // hide default screen until no planes found
+        _uiScreens[(int)InterractionManagerState.Default].SetActive(false);
     }
 
     private void UpdateUIScreens()
@@ -81,11 +158,15 @@ public class InteractionManager : MonoBehaviour
     {
         _currentState = InterractionManagerState.Default;
         _targetMarker.SetActive(false);
+        ShowPlanes(true);
         UpdateUIScreens();
     }
 
     private void Update()
     {
+        if (!_foundPlanes)
+            return;
+
         if (Input.touchCount > 0)
         {
             Touch touch1 = Input.GetTouch(0);
@@ -250,6 +331,17 @@ public class InteractionManager : MonoBehaviour
             throw new MissingComponentException(spObj.GetType().Name + " component not found!");
 
         spObj.GiveNumber(++_spawnedObjectCount);
+
+        // add anchor to the object
+        AnchorObject(newObject);
+    }
+
+    private void AnchorObject(GameObject obj)
+    {
+        if (!obj.GetComponent<ARAnchor>())
+        {
+            obj.AddComponent<ARAnchor>();
+        }
     }
 
     private void InitializeDefaultScreen()

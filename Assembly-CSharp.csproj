@@ -60,6 +60,7 @@
     <Compile Include="Assets\Scripts\Extensions\Vector2Extensions.cs" />
     <Compile Include="Assets\Scripts\SpawnedObjectDescriptionScreen.cs" />
     <Compile Include="Assets\Scripts\InteractionManager.cs" />
+    <Compile Include="Assets\Scripts\ImageTracker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -712,9 +713,6 @@
     <Reference Include="Unity.XR.Oculus.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.XR.Oculus.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.XR.ARCore">
-      <HintPath>Library\ScriptAssemblies\Unity.XR.ARCore.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.XR.Oculus">
       <HintPath>Library\ScriptAssemblies\Unity.XR.Oculus.dll</HintPath>
     </Reference>
@@ -727,11 +725,18 @@
     <Reference Include="Unity.Notifications.Android">
       <HintPath>Library\ScriptAssemblies\Unity.Notifications.Android.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.XR.ARCore">
+      <HintPath>Library\ScriptAssemblies\Unity.XR.ARCore.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.XR.ARFoundation">
       <HintPath>Library\ScriptAssemblies\Unity.XR.ARFoundation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="CW.Common.csproj">
+      <Project>{93B39FB3-B0CD-73A2-DADC-E3D3FF56E47D}</Project>
+      <Name>CW.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="LeanTouch.csproj">
       <Project>{A50EDDA0-CBE5-76F4-048B-FF5394B5CB2B}</Project>
       <Name>LeanTouch</Name>
@@ -739,10 +744,6 @@
     <ProjectReference Include="LeanCommon.csproj">
       <Project>{35A358EE-4CCF-9CEA-A18E-7FF0B966696A}</Project>
       <Name>LeanCommon</Name>
-    </ProjectReference>
-    <ProjectReference Include="CW.Common.csproj">
-      <Project>{93B39FB3-B0CD-73A2-DADC-E3D3FF56E47D}</Project>
-      <Name>CW.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
