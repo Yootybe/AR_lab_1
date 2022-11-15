@@ -438,6 +438,16 @@ public class InteractionManager : MonoBehaviour
                 // then we call description screen to show info for the targeted object
                 descScreen.ShowObjectDescription(objectDescription);
 
+                firstLine = false;
+                secondLine = false;
+                linesMeet = false;
+
+                if (_firstLine.Count > 0)
+                    _firstLine.Clear();
+
+                if (_secondLine.Count > 0)
+                    _secondLine.Clear();
+
                 return true;
             }
         }
