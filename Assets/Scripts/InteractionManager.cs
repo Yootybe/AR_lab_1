@@ -85,7 +85,6 @@ public class InteractionManager : MonoBehaviour
         UpdateUIScreens();
 
         firstLine = false;
-        secondLine = false;
         linesMeet = false;
 
         if (_firstLine.Count > 0)
@@ -102,7 +101,6 @@ public class InteractionManager : MonoBehaviour
         UpdateUIScreens();
 
         firstLine = false;
-        secondLine = false;
         linesMeet = false;
 
         if (_firstLine.Count > 0)
@@ -127,8 +125,6 @@ public class InteractionManager : MonoBehaviour
 
                 case InterractionManagerState.SelectObject:
                     {
-
-
                         // if there;s only one touch, we try to select object
                         if (Input.touchCount == 1)
                         {
@@ -140,7 +136,6 @@ public class InteractionManager : MonoBehaviour
                             //}
 
                             bool objectSelected = ProcessTouchSelectObject(touch1, isOverUI);
-
 
                             if (touch1.phase == TouchPhase.Ended && fingerStartMove && !objectSelected)
                             {
@@ -156,7 +151,6 @@ public class InteractionManager : MonoBehaviour
                                 {
                                     Debug.Log("touch1.phase == TouchPhase.Ended && fingerStartMove 3");
                                     _secondLine.Add(touch1.position);
-                                    secondLine = true;
 
                                     linesMeet = isLinesMeet(_firstLine, _secondLine);
                                 }
@@ -189,7 +183,20 @@ public class InteractionManager : MonoBehaviour
 
         if (linesMeet)
         {
-            transparency -= 0.01f;
+
+            SpawnedObject obj = _selectedObject.GetComponent<SpawnedObject>();
+            obj.linesMeet = linesMeet;
+
+            firstLine = false;
+            linesMeet = false;
+
+            if (_firstLine.Count > 0)
+                _firstLine.Clear();
+
+            if (_secondLine.Count > 0)
+                _secondLine.Clear();
+
+            /*transparency -= 0.01f;
             ChengeTransparency(_selectedObject.GetComponent<Renderer>().material, transparency);
 
             if (transparency < 0.02f)
@@ -209,10 +216,10 @@ public class InteractionManager : MonoBehaviour
                     _secondLine.Clear();
 
                 transparency = 1.0f;
-            }
+            }*/
         }
 
-        if (currentRotationSpeed > 0.0f)
+        /*if (currentRotationSpeed > 0.0f)
         {
 
             if (rotatingRight)
@@ -229,14 +236,11 @@ public class InteractionManager : MonoBehaviour
                 rotatingRight = false;
                 rotatingLeft = false;
             }
-        }
+        }*/
     }
 
     bool fingerStartMove = false;
-
     bool firstLine = false;
-    bool secondLine = false;
-
     bool linesMeet = false;
 
     private bool isLinesMeet(List<Vector2> firstLineV, List<Vector2> secondLineV)
@@ -250,10 +254,9 @@ public class InteractionManager : MonoBehaviour
         float firstLineLenght = (float)Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
         float secondLineLenght = (float)Math.Sqrt((x4 - x3) * (x4 - x3) + (y4 - y3) * (y4 - y3));
 
-        if (secondLineLenght < 100.0f || secondLineLenght < 100.0f)
+        if (secondLineLenght < 100.0f || firstLineLenght < 100.0f)
         {
             firstLine = false;
-            secondLine = false;
             linesMeet = false;
 
             if (_firstLine.Count > 0)
@@ -284,16 +287,12 @@ public class InteractionManager : MonoBehaviour
         return true;
     }
 
-    float currentRotationSpeed = 0.0f;
-
-    bool rotatingRight = false;
-    bool rotatingLeft = false;
-
     public void rotateRight()
     {
+        SpawnedObject obj = _selectedObject.GetComponent<SpawnedObject>();
+
         fingerStartMove = false;
         firstLine = false;
-        secondLine = false;
 
         if (_firstLine.Count > 0)
             _firstLine.Clear();
@@ -301,35 +300,35 @@ public class InteractionManager : MonoBehaviour
         if (_secondLine.Count > 0)
             _secondLine.Clear();
 
+        if (obj.rotatingRight)
+            obj.currentRotationSpeed += 500.0f;
 
-        if (rotatingRight)
-            currentRotationSpeed += 500.0f;
-
-        if (!rotatingRight && currentRotationSpeed == 0.0f)
+        if (!obj.rotatingRight && obj.currentRotationSpeed == 0.0f)
         {
-            currentRotationSpeed += 500.0f;
-            rotatingRight = true;
+            obj.currentRotationSpeed += 500.0f;
+            obj.rotatingRight = true;
         }
 
-        if (rotatingLeft)
+        if (obj.rotatingLeft)
         {
-            if (currentRotationSpeed < 500.0f)
+            if (obj.currentRotationSpeed < 500.0f)
             {
-                currentRotationSpeed = 500.0f - currentRotationSpeed;
-                rotatingLeft = false;
+                obj.currentRotationSpeed = 500.0f - obj.currentRotationSpeed;
+                obj.rotatingLeft = false;
             }
             else
             {
-                currentRotationSpeed -= 500.0f;
+                obj.currentRotationSpeed -= 500.0f;
             }
         }
     }
 
     public void rotateLeft()
     {
+        SpawnedObject obj = _selectedObject.GetComponent<SpawnedObject>();
+
         fingerStartMove = false;
         firstLine = false;
-        secondLine = false;
 
         if (_firstLine.Count > 0)
             _firstLine.Clear();
@@ -337,25 +336,25 @@ public class InteractionManager : MonoBehaviour
         if (_secondLine.Count > 0)
             _secondLine.Clear();
 
-        if (rotatingLeft)
-            currentRotationSpeed += 500.0f;
+        if (obj.rotatingLeft)
+            obj.currentRotationSpeed += 500.0f;
 
-        if (!rotatingLeft && currentRotationSpeed == 0.0f)
+        if (!obj.rotatingLeft && obj.currentRotationSpeed == 0.0f)
         {
-            currentRotationSpeed += 500.0f;
-            rotatingLeft = true;
+            obj.currentRotationSpeed += 500.0f;
+            obj.rotatingLeft = true;
         }
 
-        if (rotatingRight)
+        if (obj.rotatingRight)
         {
-            if (currentRotationSpeed < 500.0f)
+            if (obj.currentRotationSpeed < 500.0f)
             {
-                currentRotationSpeed = 500.0f - currentRotationSpeed;
-                rotatingRight = false;
+                obj.currentRotationSpeed = 500.0f - obj.currentRotationSpeed;
+                obj.rotatingRight = false;
             }
             else
             {
-                currentRotationSpeed -= 500.0f;
+                obj.currentRotationSpeed -= 500.0f;
             }
         }
     }
@@ -435,11 +434,16 @@ public class InteractionManager : MonoBehaviour
 
                 _descriptionScreen = descScreen;
 
+                objectDescription.thisObjectRef = _selectedObject;
+                objectDescription.thisDescriptionScreenRef = descScreen;
+
+
                 // then we call description screen to show info for the targeted object
                 descScreen.ShowObjectDescription(objectDescription);
 
+                objectDescription.thisObjectRef = _selectedObject;
+
                 firstLine = false;
-                secondLine = false;
                 linesMeet = false;
 
                 if (_firstLine.Count > 0)
