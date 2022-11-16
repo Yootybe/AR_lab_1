@@ -8,6 +8,8 @@ using UnityEngine.XR.ARSubsystems;
 
 [RequireComponent(typeof(ARRaycastManager))]
 [RequireComponent(typeof(ARPlaneManager))]
+[RequireComponent(typeof(ARFaceManager))]
+[RequireComponent(typeof(ARAnchorManager))]
 
 public class InteractionManager : MonoBehaviour
 {
@@ -19,7 +21,7 @@ public class InteractionManager : MonoBehaviour
     // Each interaction manager state correlate to UI Screens:
     // Default (0) - _uiScreens[0], SpawnObject(1) - _uiScreens[1] etc.
 
-    private enum InterractionManagerState { Default, SpawnObject, SelectObject, ImageTracker }
+    private enum InterractionManagerState { Default, SpawnObject, SelectObject, ImageTracker, FaceMask }
     private InterractionManagerState _currentState;
     private UnityAction[] _stateInitializationAction;
     private int _spawnedObjectType = -1;
@@ -30,6 +32,7 @@ public class InteractionManager : MonoBehaviour
     private List<ARRaycastHit> _raycastHits;
     private ARPlaneManager _aRPlaneManager;
     private ARAnchorManager _aRAnchorManager;
+    private ARFaceManager _aRFaceManager;
     private GameObject _targetMarker;
     private GameObject _selectedObject;
 
@@ -45,11 +48,50 @@ public class InteractionManager : MonoBehaviour
         _aRPlaneManager = GetComponent<ARPlaneManager>();
         _aRPlaneManager.planesChanged += OnPlanesChanged;
 
+        _aRFaceManager = GetComponent<ARFaceManager>();
+
         _stateInitializationAction = new UnityAction[Enum.GetNames(typeof(InterractionManagerState)).Length];
         _stateInitializationAction[(int)InterractionManagerState.Default] = InitializeDefaultScreen;
         _stateInitializationAction[(int)InterractionManagerState.SpawnObject] = InitializeObjectSpawner;
         _stateInitializationAction[(int)InterractionManagerState.SelectObject] = InitializeObjectSelection;
         _stateInitializationAction[(int)InterractionManagerState.ImageTracker] = InitializeImageTracker;
+        _stateInitializationAction[(int)InterractionManagerState.FaceMask] = InitializeFaceMask;
+    }
+
+    private void InitializeFaceMask()
+    {
+        _aRRaycastManager.enabled = false;
+        _aRAnchorManager.enabled = false;
+        ShowPlanes(false);
+        ShowFrontalCamera(true);
+        ShowFaces(true);
+    }
+
+    private void ShowFaces(bool state)
+    {
+        foreach (ARFace face in _aRFaceManager.trackables)
+        {
+            face.gameObject.SetActive(state);
+        }
+        _aRFaceManager.enabled = state;
+    }
+
+    private void ShowFrontalCamera(bool state)
+    {
+        ARCameraManager cameraManager = _arCamera.GetComponent<ARCameraManager>();
+        if(!cameraManager)
+        {
+            throw new MissingComponentException(cameraManager.GetType().Name + " component not found");
+        }
+
+        if(state)
+        {
+            cameraManager.requestedFacingDirection = CameraFacingDirection.User;
+        }
+        else
+        {
+            cameraManager.requestedFacingDirection = CameraFacingDirection.World;
+        }
     }
 
     private void InitializeImageTracker()
@@ -159,6 +201,7 @@ public class InteractionManager : MonoBehaviour
         _currentState = InterractionManagerState.Default;
         _targetMarker.SetActive(false);
         ShowPlanes(true);
+        ShowFaces(false);
         UpdateUIScreens();
     }
 
@@ -347,6 +390,10 @@ public class InteractionManager : MonoBehaviour
     private void InitializeDefaultScreen()
     {
         Debug.Log("Initialize default screen");
+        _selectedObject = null;
+        _aRPlaneManager.enabled = true;
+        _aRRaycastManager.enabled = true;
+        _aRAnchorManager.enabled = true;
         ShowMarker(false);
     }
 
