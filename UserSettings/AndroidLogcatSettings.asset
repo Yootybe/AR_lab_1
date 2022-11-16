@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "R52N503KLRM",
         "name": "com.DefaultCompany.AR_lab_1",
-        "processId": 20802,
+        "processId": 22661,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -120,6 +120,48 @@
             "deviceId": "R52N503KLRM",
             "name": "com.DefaultCompany.AR_lab_1",
             "processId": 20802,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 18223,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 19624,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 20207,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 20824,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 21740,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 22190,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 22661,
             "exited": false
         },
         {

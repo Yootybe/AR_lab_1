@@ -184,11 +184,19 @@ public class InteractionManager : MonoBehaviour
         if (linesMeet)
         {
 
-            SpawnedObject obj = _selectedObject.GetComponent<SpawnedObject>();
-            obj.linesMeet = linesMeet;
+            linesMeet = false;
+            Debug.Log("linesMeet GLOBAL");
+
+
+            if (_selectedObject)
+            {
+                SpawnedObject obj = _selectedObject.GetComponent<SpawnedObject>();
+                obj.linesMeet = true;
+            }
+            
 
             firstLine = false;
-            linesMeet = false;
+            
 
             if (_firstLine.Count > 0)
                 _firstLine.Clear();
@@ -245,6 +253,9 @@ public class InteractionManager : MonoBehaviour
 
     private bool isLinesMeet(List<Vector2> firstLineV, List<Vector2> secondLineV)
     {
+
+        Debug.Log("isLinesMeet() 1");
+
         float x1 = firstLineV[0].x; float y1 = firstLineV[0].y;
         float x2 = firstLineV[1].x; float y2 = firstLineV[1].y;
 
@@ -254,7 +265,7 @@ public class InteractionManager : MonoBehaviour
         float firstLineLenght = (float)Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
         float secondLineLenght = (float)Math.Sqrt((x4 - x3) * (x4 - x3) + (y4 - y3) * (y4 - y3));
 
-        if (secondLineLenght < 100.0f || firstLineLenght < 100.0f)
+        /*if (secondLineLenght < 100.0f || firstLineLenght < 100.0f)
         {
             firstLine = false;
             linesMeet = false;
@@ -266,23 +277,31 @@ public class InteractionManager : MonoBehaviour
                 _secondLine.Clear();
 
             return false;
-        }
+        }*/
+
+        firstLine = false;
 
         _firstLine.Clear(); _secondLine.Clear();
 
         float tg1 = (x2 - x1) / (y2 - y1);
         float tg2 = (x4 - x3) / (y4 - y3);
 
+        Debug.Log("isLinesMeet() 2");
+
         if (tg1 > tg2)
         {
+            Debug.Log("isLinesMeet() 3");
             if (tg1 - tg2 < 0.1f)
                 return false;
         }
         else
         {
-            if (tg1 - tg2 < -0.1f)
+            Debug.Log("isLinesMeet() 4" + (tg1 - tg2));
+            if (tg1 - tg2 > -0.1f)
                 return false;
         }
+
+        Debug.Log("isLinesMeet() 5");
 
         return true;
     }
