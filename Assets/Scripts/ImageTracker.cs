@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
@@ -13,6 +14,7 @@ public class ImageTracker : MonoBehaviour
     private int _refImageCount;
     private Dictionary<string, GameObject> _allObjects;
     private IReferenceImageLibrary _refLibrary;
+    private VideoPlayer activatedVideo;
 
     private void OnEnable()
     {
@@ -59,6 +61,9 @@ public class ImageTracker : MonoBehaviour
         Debug.Log("Tracked the target: " + imageName);
         _allObjects[imageName].SetActive(true);
         _allObjects[imageName].transform.localScale = new Vector3(0.0001f, 0.0001f, 0.0001f);
+
+        activatedVideo = _allObjects[imageName].GetComponent<VideoPlayer>();
+        videoPlaying = true;
     }
 
     private void UpdateTrackedObject(ARTrackedImage trackedImage)
@@ -104,5 +109,47 @@ public class ImageTracker : MonoBehaviour
             key.Value.SetActive(false);
 
         manager.DisplayDefaultScreen();
+    }
+
+    bool videoPlaying = false;
+    public void StartPause()
+    {
+        if (videoPlaying)
+        {
+            activatedVideo.Pause();
+            videoPlaying = false;
+        }
+        else
+        {
+            activatedVideo.Pause();
+            videoPlaying = true;
+        }
+    }
+
+    public void Stop()
+    {
+        activatedVideo.Stop();
+    }
+
+    public void increaseSpeed()
+    {
+        activatedVideo.playbackSpeed += 1.0f;
+    }
+
+    public void decreaseSpeed()
+    {
+        activatedVideo.playbackSpeed -= 1.0f;
+    }
+
+    public void Plus5Sec()
+    {
+        if (activatedVideo.time > 5.0f)
+            activatedVideo.time += 5.0f;
+    }
+
+    public void Minus5Sec()
+    {
+        if (activatedVideo.time > 5.0f)
+            activatedVideo.time -= 5.0f;
     }
 }
