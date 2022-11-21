@@ -35,3 +35,23 @@ MonoBehaviour:
     m_SpecifySize: 1
     m_Name: card2
     m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5028101863621756749
+      m_GuidHigh: 12155554343495478186
+    m_SerializedTextureGuid:
+      m_GuidLow: 7499866145777539353
+      m_GuidHigh: 16250662911652968584
+    m_Size: {x: 0.03, y: 0.04754237}
+    m_SpecifySize: 1
+    m_Name: card3
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 4722014937994232774
+      m_GuidHigh: 14877457991385845164
+    m_SerializedTextureGuid:
+      m_GuidLow: 7729481897496836983
+      m_GuidHigh: 14156923715298657499
+    m_Size: {x: 0.03, y: 0.047312252}
+    m_SpecifySize: 1
+    m_Name: card4
+    m_Texture: {fileID: 0}

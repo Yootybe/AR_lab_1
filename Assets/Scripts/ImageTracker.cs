@@ -62,7 +62,35 @@ public class ImageTracker : MonoBehaviour
         _allObjects[imageName].SetActive(true);
         _allObjects[imageName].transform.localScale = new Vector3(0.0001f, 0.0001f, 0.0001f);
 
-        activatedVideo = _allObjects[imageName].GetComponent<VideoPlayer>();
+        //activatedVideo = _allObjects[imageName].GetComponent<Canvas>().GetComponent<GameObject>().GetComponent<VideoPlayer>();
+        activatedVideo = GameObject.FindGameObjectsWithTag("VideoPlayer4")[0].GetComponent<VideoPlayer>();
+        if (!activatedVideo)
+        {
+            throw new MissingComponentException(activatedVideo.GetType().Name + " not found!");
+            Debug.LogWarning("activatedVideo NOT FOUND");
+            Debug.LogWarning("activatedVideo NOT FOUND");
+            Debug.LogWarning("activatedVideo NOT FOUND");
+            Debug.LogWarning("activatedVideo NOT FOUND");
+            Debug.LogWarning("activatedVideo NOT FOUND");
+            Debug.LogWarning("activatedVideo NOT FOUND");
+            Debug.LogWarning("activatedVideo NOT FOUND");
+
+        }
+        else
+        {
+            Debug.LogWarning("FOUND");
+            Debug.LogWarning("FOUND");
+            Debug.LogWarning("FOUND");
+            Debug.LogWarning("FOUND");
+            Debug.LogWarning("FOUND");
+            Debug.LogWarning("FOUND");
+            Debug.LogWarning("FOUND");
+            Debug.LogWarning("FOUND");
+            Debug.LogWarning("FOUND");
+        }
+            
+
+       
         videoPlaying = true;
     }
 
@@ -73,6 +101,8 @@ public class ImageTracker : MonoBehaviour
             _allObjects[trackedImage.referenceImage.name].SetActive(true);
             _allObjects[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
             _allObjects[trackedImage.referenceImage.name].transform.rotation = trackedImage.transform.rotation;
+            //activatedVideo = _allObjects[trackedImage.referenceImage.name].GetComponent<Canvas>().GetComponent<GameObject>().GetComponent<VideoPlayer>();
+            activatedVideo = GameObject.FindGameObjectsWithTag("VideoPlayer4")[0].GetComponent<VideoPlayer>();
         }
         else
         {

@@ -1,9 +1,9 @@
 {
-    "m_SelectedDeviceId": "R52N503KLRM",
+    "m_SelectedDeviceId": "R52N503KL4R",
     "m_SelectedPackage": {
-        "deviceId": "R52N503KLRM",
+        "deviceId": "R52N503KL4R",
         "name": "com.DefaultCompany.AR_lab_1",
-        "processId": 8151,
+        "processId": 18552,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -108,6 +108,108 @@
             "deviceId": "R52N503KLRM",
             "name": "com.DefaultCompany.AR_lab_1",
             "processId": 8151,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 30345,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 32629,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 1470,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 2547,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 3054,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 4031,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 6837,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 8390,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 10211,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 11005,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 11936,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 13650,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 14510,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 15756,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 16514,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 17441,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KL4R",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 18552,
             "exited": false
         }
     ],
