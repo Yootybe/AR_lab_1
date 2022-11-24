@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 1137255820825288742}
   m_Layer: 0
   m_Name: Video Player
-  m_TagString: VideoPlayer4
+  m_TagString: VideoPlayer1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

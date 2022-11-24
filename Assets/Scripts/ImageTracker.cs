@@ -15,6 +15,7 @@ public class ImageTracker : MonoBehaviour
     private Dictionary<string, GameObject> _allObjects;
     private IReferenceImageLibrary _refLibrary;
     private VideoPlayer activatedVideo;
+    private GameObject[] activatedVideos;
 
     private void OnEnable()
     {
@@ -62,35 +63,17 @@ public class ImageTracker : MonoBehaviour
         _allObjects[imageName].SetActive(true);
         _allObjects[imageName].transform.localScale = new Vector3(0.0001f, 0.0001f, 0.0001f);
 
-        //activatedVideo = _allObjects[imageName].GetComponent<Canvas>().GetComponent<GameObject>().GetComponent<VideoPlayer>();
-        activatedVideo = GameObject.FindGameObjectsWithTag("VideoPlayer4")[0].GetComponent<VideoPlayer>();
+        activatedVideos = GameObject.FindGameObjectsWithTag("VideoPlayer1");
         if (!activatedVideo)
         {
             throw new MissingComponentException(activatedVideo.GetType().Name + " not found!");
             Debug.LogWarning("activatedVideo NOT FOUND");
-            Debug.LogWarning("activatedVideo NOT FOUND");
-            Debug.LogWarning("activatedVideo NOT FOUND");
-            Debug.LogWarning("activatedVideo NOT FOUND");
-            Debug.LogWarning("activatedVideo NOT FOUND");
-            Debug.LogWarning("activatedVideo NOT FOUND");
-            Debug.LogWarning("activatedVideo NOT FOUND");
-
         }
         else
         {
             Debug.LogWarning("FOUND");
-            Debug.LogWarning("FOUND");
-            Debug.LogWarning("FOUND");
-            Debug.LogWarning("FOUND");
-            Debug.LogWarning("FOUND");
-            Debug.LogWarning("FOUND");
-            Debug.LogWarning("FOUND");
-            Debug.LogWarning("FOUND");
-            Debug.LogWarning("FOUND");
         }
-            
-
-       
+           
         videoPlaying = true;
     }
 
@@ -101,8 +84,6 @@ public class ImageTracker : MonoBehaviour
             _allObjects[trackedImage.referenceImage.name].SetActive(true);
             _allObjects[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
             _allObjects[trackedImage.referenceImage.name].transform.rotation = trackedImage.transform.rotation;
-            //activatedVideo = _allObjects[trackedImage.referenceImage.name].GetComponent<Canvas>().GetComponent<GameObject>().GetComponent<VideoPlayer>();
-            activatedVideo = GameObject.FindGameObjectsWithTag("VideoPlayer4")[0].GetComponent<VideoPlayer>();
         }
         else
         {
@@ -116,7 +97,6 @@ public class ImageTracker : MonoBehaviour
         foreach (var addedImage in args.added)
         {
             ActivateTrackedObject(addedImage.referenceImage.name);
-
         }
 
         foreach (var updated in args.updated)
@@ -142,44 +122,105 @@ public class ImageTracker : MonoBehaviour
     }
 
     bool videoPlaying = false;
+    bool videoStopped = false;
     public void StartPause()
     {
-        if (videoPlaying)
+        bool curVideoPlaying = false;
+        bool curVideoStopped = false;
+
+        for (int i = 0; i < activatedVideos.Length; i++)
         {
-            activatedVideo.Pause();
-            videoPlaying = false;
+            curVideoPlaying = videoPlaying;
+            curVideoStopped = videoStopped;
+
+            activatedVideo = activatedVideos[i].GetComponent<VideoPlayer>();
+
+            if (activatedVideo)
+            {
+                if (curVideoPlaying)
+                {
+                    activatedVideo.Pause();
+                    curVideoPlaying = false;
+                }
+                else
+                {
+                    if (videoStopped)
+                        activatedVideo.frame = 0;
+
+                    activatedVideo.Play();
+                    curVideoPlaying = true;
+                    curVideoStopped = false;
+                }
+            }
         }
-        else
-        {
-            activatedVideo.Pause();
-            videoPlaying = true;
-        }
+
+        videoPlaying = curVideoPlaying;
+        videoStopped = curVideoStopped;
     }
 
+    
     public void Stop()
     {
-        activatedVideo.Stop();
+
+        for (int i = 0; i < activatedVideos.Length; i++)
+        {
+            activatedVideo = activatedVideos[i].GetComponent<VideoPlayer>();
+
+            if (activatedVideo)
+                activatedVideo.Stop();
+        }
+
+        videoPlaying = false;
+        videoStopped = true;
     }
 
     public void increaseSpeed()
     {
-        activatedVideo.playbackSpeed += 1.0f;
+        for (int i = 0; i < activatedVideos.Length; i++)
+        {
+
+            activatedVideo = activatedVideos[i].GetComponent<VideoPlayer>();
+
+            if (activatedVideo)
+                activatedVideo.playbackSpeed += 1.0f;
+        }
     }
 
     public void decreaseSpeed()
     {
-        activatedVideo.playbackSpeed -= 1.0f;
+        for (int i = 0; i < activatedVideos.Length; i++)
+        {
+            activatedVideo = activatedVideos[i].GetComponent<VideoPlayer>();
+
+            if (activatedVideo)
+                activatedVideo.playbackSpeed -= 1.0f;
+        }
     }
 
     public void Plus5Sec()
     {
-        if (activatedVideo.time > 5.0f)
-            activatedVideo.time += 5.0f;
+        for (int i = 0; i < activatedVideos.Length; i++)
+        {
+            activatedVideo = activatedVideos[i].GetComponent<VideoPlayer>();
+
+            if (activatedVideo)
+            {
+                    activatedVideo.time += 5.0f;
+            }
+        }
     }
 
     public void Minus5Sec()
     {
-        if (activatedVideo.time > 5.0f)
-            activatedVideo.time -= 5.0f;
+        for (int i = 0; i < activatedVideos.Length; i++)
+        {
+            activatedVideo = activatedVideos[i].GetComponent<VideoPlayer>();
+
+            if (activatedVideo)
+            {
+                if (activatedVideo.time > 5.0f)
+                    activatedVideo.time -= 5.0f;
+            }
+        }
     }
 }

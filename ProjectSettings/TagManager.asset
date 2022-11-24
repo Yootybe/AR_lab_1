@@ -6,6 +6,9 @@ TagManager:
   tags:
   - SpawnedObject
   - VideoPlayer4
+  - VideoPlayer3
+  - VideoPlayer2
+  - VideoPlayer1
   layers:
   - Default
   - TransparentFX
