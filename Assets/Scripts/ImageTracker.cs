@@ -3,16 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
-
+using static System.Net.Mime.MediaTypeNames;
 
 public class ImageTracker : MonoBehaviour
 {
     [SerializeField] private List<GameObject> ObjectsToPlace;
     [SerializeField] private ARTrackedImageManager aRTrackedImageManager;
 
+    [SerializeField] private List<GameObject> FirstComics;
+    [SerializeField] private List<GameObject> SecondComics;
+    [SerializeField] private List<GameObject> ThirdComics;
+
+    private List<GameObject> CurrentComics;
+
+    private GameObject lastActivatedObject;
+    private int lastIndexInComics = -1;
+
+    private GameObject defaultObject;
+
     private int _refImageCount;
     private Dictionary<string, GameObject> _allObjects;
     private IReferenceImageLibrary _refLibrary;
+    //private Image 
 
     private void OnEnable()
     {
@@ -59,6 +71,9 @@ public class ImageTracker : MonoBehaviour
         Debug.Log("Tracked the target: " + imageName);
         _allObjects[imageName].SetActive(true);
         _allObjects[imageName].transform.localScale = new Vector3(0.0001f, 0.0001f, 0.0001f);
+
+        lastActivatedObject = _allObjects[imageName];
+        defaultObject = _allObjects[imageName];
     }
 
     private void UpdateTrackedObject(ARTrackedImage trackedImage)
@@ -68,6 +83,9 @@ public class ImageTracker : MonoBehaviour
             _allObjects[trackedImage.referenceImage.name].SetActive(true);
             _allObjects[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
             _allObjects[trackedImage.referenceImage.name].transform.rotation = trackedImage.transform.rotation;
+
+            lastActivatedObject = _allObjects[trackedImage.referenceImage.name];
+            defaultObject = _allObjects[trackedImage.referenceImage.name];
         }
         else
         {
@@ -81,7 +99,6 @@ public class ImageTracker : MonoBehaviour
         foreach (var addedImage in args.added)
         {
             ActivateTrackedObject(addedImage.referenceImage.name);
-
         }
 
         foreach (var updated in args.updated)
@@ -104,5 +121,76 @@ public class ImageTracker : MonoBehaviour
             key.Value.SetActive(false);
 
         manager.DisplayDefaultScreen();
+    }
+
+    public void ActivateDefaultCover()
+    {
+        lastIndexInComics = -1;
+
+        lastActivatedObject.SetActive(false);
+        lastActivatedObject = null;
+        defaultObject.SetActive(true);
+    }
+
+    public void ActivateHorizon()
+    {
+        CurrentComics = FirstComics;
+
+        lastActivatedObject.SetActive(false);
+        lastActivatedObject = CurrentComics[0];
+        lastActivatedObject.SetActive(true);
+
+        lastIndexInComics = 0;
+    }
+
+    public void ActivateBladeRunner()
+    {
+        CurrentComics = SecondComics;
+
+        lastActivatedObject.SetActive(false);
+        lastActivatedObject = CurrentComics[0];
+        lastActivatedObject.SetActive(true);
+
+        lastIndexInComics = 0;
+    }
+
+    public void ActivateGitS()
+    {
+        CurrentComics = ThirdComics;
+
+        lastActivatedObject.SetActive(false);
+        lastActivatedObject = CurrentComics[0];
+        lastActivatedObject.SetActive(true);
+
+        lastIndexInComics = 0;
+    }
+
+    public void TurnPageRight()
+    {
+        if (lastIndexInComics < 9)
+        {
+            lastIndexInComics++;
+
+            lastActivatedObject.SetActive(false);
+            lastActivatedObject = CurrentComics[lastIndexInComics];
+            lastActivatedObject.SetActive(true);
+        }
+    }
+
+    public void TurnPageLeft()
+    {
+        if (lastIndexInComics > 0)
+        {
+            lastIndexInComics--;
+
+            lastActivatedObject.SetActive(false);
+            lastActivatedObject = CurrentComics[lastIndexInComics];
+            lastActivatedObject.SetActive(true);
+        }
+
+        if (lastIndexInComics == 0)
+        {
+            ActivateDefaultCover();
+        }
     }
 }
