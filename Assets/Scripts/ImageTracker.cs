@@ -24,7 +24,20 @@ public class ImageTracker : MonoBehaviour
     private int _refImageCount;
     private Dictionary<string, GameObject> _allObjects;
     private IReferenceImageLibrary _refLibrary;
-    //private Image 
+
+    private Dictionary<string, GameObject> _FirstComics;
+    private Dictionary<string, GameObject> _SecondComics;
+    private Dictionary<string, GameObject> _ThirdComics;
+
+    enum ComicsType
+    {
+        Default = 0,
+        First = 1,
+        Second = 2,
+        Third = 3
+    }
+
+    private ComicsType currentComicsType = ComicsType.Default;
 
     private void OnEnable()
     {
@@ -52,9 +65,48 @@ public class ImageTracker : MonoBehaviour
     private void LoadObjectDictionary()
     {
         _allObjects = new Dictionary<string, GameObject>();
+
+        _FirstComics = new Dictionary<string, GameObject>();
+        _SecondComics = new Dictionary<string, GameObject>();
+        _ThirdComics = new Dictionary<string, GameObject>();
+
         for (int i = 0; i < _refImageCount; i++)
         {
             GameObject newOverlay = new GameObject();
+
+            for (int j = 0; j < 10; j++)
+            {
+                newOverlay = FirstComics[j];
+                if (FirstComics[j].gameObject.scene.rootCount == 0)
+                {
+                    newOverlay = Instantiate(FirstComics[j], transform.localPosition, Quaternion.identity);
+                }
+                _FirstComics.Add(j.ToString(), newOverlay);
+                newOverlay.SetActive(false);
+            }
+
+            for (int j = 0; j < 10; j++)
+            {
+                newOverlay = SecondComics[j];
+                if (SecondComics[j].gameObject.scene.rootCount == 0)
+                {
+                    newOverlay = Instantiate(SecondComics[j], transform.localPosition, Quaternion.identity);
+                }
+                _SecondComics.Add(j.ToString(), newOverlay);
+                newOverlay.SetActive(false);
+            }   
+
+            for (int j = 0; j < 10; j++)
+            {
+                newOverlay = ThirdComics[j];
+                if (ThirdComics[j].gameObject.scene.rootCount == 0)
+                {
+                    newOverlay = Instantiate(ThirdComics[j], transform.localPosition, Quaternion.identity);
+                }
+                _ThirdComics.Add(j.ToString(), newOverlay);
+                newOverlay.SetActive(false);
+            }
+
             newOverlay = ObjectsToPlace[i];
             if (ObjectsToPlace[i].gameObject.scene.rootCount == 0)
             {
@@ -70,26 +122,89 @@ public class ImageTracker : MonoBehaviour
     {
         Debug.Log("Tracked the target: " + imageName);
         _allObjects[imageName].SetActive(true);
-        _allObjects[imageName].transform.localScale = new Vector3(0.0001f, 0.0001f, 0.0001f);
+        _allObjects[imageName].transform.localScale = new Vector3(0.00025f, 0.0003f, 0.0002f);
 
         lastActivatedObject = _allObjects[imageName];
         defaultObject = _allObjects[imageName];
     }
 
+
     private void UpdateTrackedObject(ARTrackedImage trackedImage)
     {
-        if (trackedImage.trackingState == TrackingState.Tracking)
-        {
-            _allObjects[trackedImage.referenceImage.name].SetActive(true);
-            _allObjects[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
-            _allObjects[trackedImage.referenceImage.name].transform.rotation = trackedImage.transform.rotation;
 
-            lastActivatedObject = _allObjects[trackedImage.referenceImage.name];
-            defaultObject = _allObjects[trackedImage.referenceImage.name];
-        }
-        else
+        switch (currentComicsType)
         {
-            _allObjects[trackedImage.referenceImage.name].SetActive(false);
+            case ComicsType.Default:
+                {
+                    if (trackedImage.trackingState == TrackingState.Tracking)
+                    {
+                        _allObjects[trackedImage.referenceImage.name].SetActive(true);
+                        _allObjects[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
+                        _allObjects[trackedImage.referenceImage.name].transform.rotation = trackedImage.transform.rotation;
+                    }
+                    else
+                    {
+                        _allObjects[trackedImage.referenceImage.name].SetActive(false);
+                    }
+                }
+                break;
+
+            case ComicsType.First:
+                {
+                    if (trackedImage.trackingState == TrackingState.Tracking)
+                    {
+                        _FirstComics[lastIndexInComics.ToString()].SetActive(true);
+                        _FirstComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
+                        _FirstComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
+                        _FirstComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.0003f, 0.0002f);
+
+                        lastActivatedObject = _FirstComics[lastIndexInComics.ToString()];
+                    }
+                    else
+                    {
+                        _FirstComics[lastIndexInComics.ToString()].SetActive(false);
+                    }
+                }
+                break;
+
+            case ComicsType.Second:
+                {
+                    if (trackedImage.trackingState == TrackingState.Tracking)
+                    {
+                        _SecondComics[lastIndexInComics.ToString()].SetActive(true);
+                        _SecondComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
+                        _SecondComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
+                        _SecondComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.0003f, 0.0002f);
+
+                        lastActivatedObject = _SecondComics[lastIndexInComics.ToString()];
+                    }
+                    else
+                    {
+                        _SecondComics[lastIndexInComics.ToString()].SetActive(false);
+                    }
+                }
+                break;
+
+            case ComicsType.Third:
+                {
+                    if (trackedImage.trackingState == TrackingState.Tracking)
+                    {
+                        _ThirdComics[lastIndexInComics.ToString()].SetActive(true);
+                        _ThirdComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
+                        _ThirdComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
+                        _ThirdComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.0003f, 0.0002f);
+
+                        lastActivatedObject = _ThirdComics[lastIndexInComics.ToString()];
+                    }
+                    else
+                    {
+                        _ThirdComics[lastIndexInComics.ToString()].SetActive(false);
+                    }
+                }
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -128,68 +243,92 @@ public class ImageTracker : MonoBehaviour
         lastIndexInComics = -1;
 
         lastActivatedObject.SetActive(false);
-        lastActivatedObject = null;
-        defaultObject.SetActive(true);
+        lastActivatedObject = defaultObject;
+
+        currentComicsType = ComicsType.Default;
+
+        //defaultObject.SetActive(true);
     }
 
     public void ActivateHorizon()
     {
-        CurrentComics = FirstComics;
+        //CurrentComics = FirstComics;
 
-        lastActivatedObject.SetActive(false);
-        lastActivatedObject = CurrentComics[0];
-        lastActivatedObject.SetActive(true);
+        //lastActivatedObject.SetActive(false);
+        //lastActivatedObject = CurrentComics[0];
+        //lastActivatedObject.SetActive(true);
+
+        //lastIndexInComics = 0;
+
 
         lastIndexInComics = 0;
+        currentComicsType = ComicsType.First;
+        lastActivatedObject.SetActive(false);
     }
 
     public void ActivateBladeRunner()
     {
-        CurrentComics = SecondComics;
+        lastIndexInComics = 0;
+
+        currentComicsType = ComicsType.Second;
+
+        //CurrentComics = _SecondComics[lastIndexInComics.ToString()];
 
         lastActivatedObject.SetActive(false);
-        lastActivatedObject = CurrentComics[0];
-        lastActivatedObject.SetActive(true);
+        //lastActivatedObject = CurrentComics[0];
+        //lastActivatedObject.SetActive(true);
 
-        lastIndexInComics = 0;
+        
     }
 
     public void ActivateGitS()
     {
-        CurrentComics = ThirdComics;
+        //CurrentComics = ThirdComics;
+
+        currentComicsType = ComicsType.Third;
+        lastIndexInComics = 0;
 
         lastActivatedObject.SetActive(false);
-        lastActivatedObject = CurrentComics[0];
-        lastActivatedObject.SetActive(true);
+        //lastActivatedObject = CurrentComics[0];
+        //lastActivatedObject.SetActive(true);
 
-        lastIndexInComics = 0;
     }
 
     public void TurnPageRight()
     {
+        Debug.LogWarning("TurnPageRight() 1");
+
         if (lastIndexInComics < 9)
         {
+            Debug.LogWarning("TurnPageRight() 2");
+
             lastIndexInComics++;
 
             lastActivatedObject.SetActive(false);
-            lastActivatedObject = CurrentComics[lastIndexInComics];
-            lastActivatedObject.SetActive(true);
+            //lastActivatedObject = CurrentComics[lastIndexInComics];
+            //lastActivatedObject.SetActive(true);
         }
     }
 
     public void TurnPageLeft()
     {
+        Debug.LogWarning("TurnPageLeft() 1");
+
         if (lastIndexInComics > 0)
         {
+            Debug.LogWarning("TurnPageLeft() 2");
+
             lastIndexInComics--;
 
             lastActivatedObject.SetActive(false);
-            lastActivatedObject = CurrentComics[lastIndexInComics];
-            lastActivatedObject.SetActive(true);
+            //lastActivatedObject = CurrentComics[lastIndexInComics];
+            //lastActivatedObject.SetActive(true);
         }
 
         if (lastIndexInComics == 0)
         {
+            Debug.LogWarning("TurnPageLeft() 3");
+
             ActivateDefaultCover();
         }
     }
