@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "R52N503KLRM",
         "name": "com.DefaultCompany.AR_lab_1",
-        "processId": 1034,
+        "processId": 17861,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -156,6 +156,66 @@
             "deviceId": "R52N503KLRM",
             "name": "com.DefaultCompany.AR_lab_1",
             "processId": 1034,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 17638,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 20068,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 20958,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 24771,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 26475,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 27094,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 29164,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 15272,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 16981,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KLRM",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 17861,
             "exited": false
         }
     ],

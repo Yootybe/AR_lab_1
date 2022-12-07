@@ -207,8 +207,8 @@ public class InteractionManager : MonoBehaviour
 
     private void Update()
     {
-        if (!_foundPlanes)
-            return;
+        //if (!_foundPlanes)
+            //return;
 
         if (Input.touchCount > 0)
         {

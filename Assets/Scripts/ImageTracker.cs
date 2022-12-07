@@ -17,6 +17,9 @@ public class ImageTracker : MonoBehaviour
     private List<GameObject> CurrentComics;
 
     private GameObject lastActivatedObject;
+    private GameObject deletableObject;
+    private Vector3 TrueObjPosition;
+
     private int lastIndexInComics = -1;
 
     private GameObject defaultObject;
@@ -28,6 +31,8 @@ public class ImageTracker : MonoBehaviour
     private Dictionary<string, GameObject> _FirstComics;
     private Dictionary<string, GameObject> _SecondComics;
     private Dictionary<string, GameObject> _ThirdComics;
+
+    private GameObject[] Buttons;
 
     enum ComicsType
     {
@@ -54,7 +59,32 @@ public class ImageTracker : MonoBehaviour
         _refLibrary = aRTrackedImageManager.referenceLibrary;
         _refImageCount = _refLibrary.count;
         LoadObjectDictionary();
+
+        Buttons = GameObject.FindGameObjectsWithTag("IBButtons");
+
+        for (int i = 0; i < Buttons.Length; i++)
+        {
+            Buttons[i].SetActive(false);
+        }
     }
+
+
+    /*bool endOfTurningPage = true;
+    private void Update()
+    {
+        if(endOfTurningPage)
+            return;
+
+        deletableObject.transform.position -= new Vector3(10.0f, 0.0f, 0.0f);
+        lastActivatedObject.transform.position -= new Vector3(10.0f, 0.0f, 0.0f);
+
+        if (lastActivatedObject.transform.position.x < TrueObjPosition.x)
+        {
+            endOfTurningPage = true;
+            deletableObject.SetActive(false);
+            lastActivatedObject.transform.position = TrueObjPosition;
+        }
+    }*/
 
     public void Initialize()
     {
@@ -122,7 +152,7 @@ public class ImageTracker : MonoBehaviour
     {
         Debug.Log("Tracked the target: " + imageName);
         _allObjects[imageName].SetActive(true);
-        _allObjects[imageName].transform.localScale = new Vector3(0.00025f, 0.0003f, 0.0002f);
+        _allObjects[imageName].transform.localScale = new Vector3(0.00025f, 0.00045f, 0.0002f);
 
         lastActivatedObject = _allObjects[imageName];
         defaultObject = _allObjects[imageName];
@@ -131,21 +161,38 @@ public class ImageTracker : MonoBehaviour
 
     private void UpdateTrackedObject(ARTrackedImage trackedImage)
     {
+        //if (!endOfTurningPage)
+          //  return;
+
+        TrueObjPosition = trackedImage.transform.position;
 
         switch (currentComicsType)
         {
             case ComicsType.Default:
                 {
+                    for (int i = 0; i < Buttons.Length; i++)
+                    {
+                        Buttons[i].SetActive(true);
+                    }
+
                     if (trackedImage.trackingState == TrackingState.Tracking)
                     {
                         _allObjects[trackedImage.referenceImage.name].SetActive(true);
                         _allObjects[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
                         _allObjects[trackedImage.referenceImage.name].transform.rotation = trackedImage.transform.rotation;
+
                     }
                     else
                     {
                         _allObjects[trackedImage.referenceImage.name].SetActive(false);
+
+                        for (int i = 0; i < Buttons.Length; i++)
+                        {
+                            Buttons[i].SetActive(false);
+                        }
                     }
+
+                    
                 }
                 break;
 
@@ -154,15 +201,23 @@ public class ImageTracker : MonoBehaviour
                     if (trackedImage.trackingState == TrackingState.Tracking)
                     {
                         _FirstComics[lastIndexInComics.ToString()].SetActive(true);
+                        //_FirstComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position + new Vector3(500.0f, 0.0f, 0.0f);
                         _FirstComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
                         _FirstComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
-                        _FirstComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.0003f, 0.0002f);
+                        _FirstComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00045f, 0.0002f);
 
                         lastActivatedObject = _FirstComics[lastIndexInComics.ToString()];
+
+                        //endOfTurningPage = true;
                     }
                     else
                     {
                         _FirstComics[lastIndexInComics.ToString()].SetActive(false);
+
+                        for (int i = 0; i < Buttons.Length; i++)
+                        {
+                            Buttons[i].SetActive(false);
+                        }
                     }
                 }
                 break;
@@ -174,13 +229,18 @@ public class ImageTracker : MonoBehaviour
                         _SecondComics[lastIndexInComics.ToString()].SetActive(true);
                         _SecondComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
                         _SecondComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
-                        _SecondComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.0003f, 0.0002f);
+                        _SecondComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00045f, 0.0002f);
 
                         lastActivatedObject = _SecondComics[lastIndexInComics.ToString()];
                     }
                     else
                     {
                         _SecondComics[lastIndexInComics.ToString()].SetActive(false);
+
+                        for (int i = 0; i < Buttons.Length; i++)
+                        {
+                            Buttons[i].SetActive(false);
+                        }
                     }
                 }
                 break;
@@ -192,13 +252,18 @@ public class ImageTracker : MonoBehaviour
                         _ThirdComics[lastIndexInComics.ToString()].SetActive(true);
                         _ThirdComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
                         _ThirdComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
-                        _ThirdComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.0003f, 0.0002f);
+                        _ThirdComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00045f, 0.0002f);
 
                         lastActivatedObject = _ThirdComics[lastIndexInComics.ToString()];
                     }
                     else
                     {
                         _ThirdComics[lastIndexInComics.ToString()].SetActive(false);
+
+                        for (int i = 0; i < Buttons.Length; i++)
+                        {
+                            Buttons[i].SetActive(false);
+                        }
                     }
                 }
                 break;
@@ -264,6 +329,9 @@ public class ImageTracker : MonoBehaviour
         lastIndexInComics = 0;
         currentComicsType = ComicsType.First;
         lastActivatedObject.SetActive(false);
+
+        //lastActivatedObject.transform.position -= new Vector3(1.0f, 0.0f, 0.0f);
+        //deletableObject = lastActivatedObject;
     }
 
     public void ActivateBladeRunner()
@@ -305,6 +373,11 @@ public class ImageTracker : MonoBehaviour
             lastIndexInComics++;
 
             lastActivatedObject.SetActive(false);
+            lastActivatedObject.transform.position -= new Vector3(1.0f, 0.0f, 0.0f);
+            //deletableObject = lastActivatedObject;
+
+            
+
             //lastActivatedObject = CurrentComics[lastIndexInComics];
             //lastActivatedObject.SetActive(true);
         }
