@@ -61,35 +61,6 @@ public class ImageTracker : MonoBehaviour
         _refLibrary = aRTrackedImageManager.referenceLibrary;
         _refImageCount = _refLibrary.count;
         LoadObjectDictionary();
-
-        ComicsButtons = GameObject.FindGameObjectsWithTag("ComicsButtons");
-
-        for (int i = 0; i < ComicsButtons.Length; i++)
-        {
-            Button button = ComicsButtons[i].GetComponent<Button>();
-
-            if (button.name == "Horizon")
-                button.onClick.AddListener(ActivateHorizon);
-
-            if (button.name == "BladeRunner")
-                button.onClick.AddListener(ActivateBladeRunner);
-
-            if (button.name == "GhostInTheShell")
-                button.onClick.AddListener(ActivateGitS);
-
-            ComicsButtons[i].SetActive(false);
-        }
-
-        DefaultScreenButtons = GameObject.FindGameObjectsWithTag("DefaultScreen");
-
-        for (int i = 0; i < DefaultScreenButtons.Length; i++)
-        {
-            Button button = DefaultScreenButtons[i].GetComponent<Button>();
-
-            button.onClick.AddListener(ActivateDefaultCover);
-
-            DefaultScreenButtons[i].SetActive(false);
-        }
     }
 
     public void Initialize()
@@ -158,10 +129,50 @@ public class ImageTracker : MonoBehaviour
     {
         Debug.Log("Tracked the target: " + imageName);
         _allObjects[imageName].SetActive(true);
-        _allObjects[imageName].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0002f);
+        _allObjects[imageName].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
         lastActivatedObject = _allObjects[imageName];
         defaultObject = _allObjects[imageName];
+
+        ComicsButtons = GameObject.FindGameObjectsWithTag("ComicsButtons");
+
+        for (int i = 0; i < ComicsButtons.Length; i++)
+        {
+            Button button = ComicsButtons[i].GetComponent<Button>();
+
+            if (button.name == "Horizon")
+            {
+                Debug.LogWarning("HorizonHorizonHorizonHorizonHorizon");
+                button.onClick.AddListener(ActivateHorizon);
+            }
+
+            if (button.name == "BladeRunner")
+                button.onClick.AddListener(ActivateBladeRunner);
+
+            if (button.name == "GhostInTheShell")
+                button.onClick.AddListener(ActivateGitS);
+
+            ComicsButtons[i].SetActive(false);
+        }
+    }
+
+    private void ActivateDefaultScreenButtons()
+    {
+        DefaultScreenButtons = GameObject.FindGameObjectsWithTag("DefaultScreen");
+
+        for (int i = 0; i < DefaultScreenButtons.Length; i++)
+        {
+            Button button = DefaultScreenButtons[i].GetComponent<Button>();
+
+            button.onClick.AddListener(ActivateDefaultCover);
+
+            DefaultScreenButtons[i].SetActive(false);
+        }
+
+        for (int i = 0; i < DefaultScreenButtons.Length; i++)
+        {
+            DefaultScreenButtons[i].SetActive(true);
+        }
     }
 
 
@@ -204,17 +215,14 @@ public class ImageTracker : MonoBehaviour
 
             case ComicsType.First:
                 {
-                    for (int i = 0; i < DefaultScreenButtons.Length; i++)
-                    {
-                        DefaultScreenButtons[i].SetActive(true);
-                    }
+                    ActivateDefaultScreenButtons();
 
                     if (trackedImage.trackingState == TrackingState.Tracking)
                     {
                         _FirstComics[lastIndexInComics.ToString()].SetActive(true);
                         _FirstComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
                         _FirstComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
-                        _FirstComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0002f);
+                        _FirstComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
                         lastActivatedObject = _FirstComics[lastIndexInComics.ToString()];
                     }
@@ -237,17 +245,14 @@ public class ImageTracker : MonoBehaviour
 
             case ComicsType.Second:
                 {
-                    for (int i = 0; i < DefaultScreenButtons.Length; i++)
-                    {
-                        DefaultScreenButtons[i].SetActive(true);
-                    }
+                    ActivateDefaultScreenButtons();
 
                     if (trackedImage.trackingState == TrackingState.Tracking)
                     {
                         _SecondComics[lastIndexInComics.ToString()].SetActive(true);
                         _SecondComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
                         _SecondComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
-                        _SecondComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0002f);
+                        _SecondComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
                         lastActivatedObject = _SecondComics[lastIndexInComics.ToString()];
                     }
@@ -270,17 +275,15 @@ public class ImageTracker : MonoBehaviour
 
             case ComicsType.Third:
                 {
-                    for (int i = 0; i < DefaultScreenButtons.Length; i++)
-                    {
-                        DefaultScreenButtons[i].SetActive(true);
-                    }
+
+                    ActivateDefaultScreenButtons();
 
                     if (trackedImage.trackingState == TrackingState.Tracking)
                     {
                         _ThirdComics[lastIndexInComics.ToString()].SetActive(true);
                         _ThirdComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
                         _ThirdComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
-                        _ThirdComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0002f);
+                        _ThirdComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
                         lastActivatedObject = _ThirdComics[lastIndexInComics.ToString()];
                     }
