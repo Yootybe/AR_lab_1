@@ -29,6 +29,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7448529058404809919}
   m_Father: {fileID: 7448529056713414356}
@@ -126,6 +127,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 540, y: 960, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7448529056579997566}
   m_Father: {fileID: 0}
@@ -159,6 +161,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7448529058404809919}
   m_RootOrder: 0
@@ -232,6 +235,7 @@ RectTransform:
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7448529058039207383}
   - {fileID: 4324708499152865896}
@@ -365,7 +369,7 @@ PrefabInstance:
     - target: {fileID: 1150375328226306815, guid: 4b3d142b4d0e80045b7c6278a1bb7817,
         type: 3}
       propertyPath: m_TagString
-      value: IBButtons
+      value: ComicsButtons
       objectReference: {fileID: 0}
     - target: {fileID: 1431779240388251953, guid: 4b3d142b4d0e80045b7c6278a1bb7817,
         type: 3}
@@ -550,7 +554,7 @@ PrefabInstance:
     - target: {fileID: 1150375328226306815, guid: 4b3d142b4d0e80045b7c6278a1bb7817,
         type: 3}
       propertyPath: m_TagString
-      value: IBButtons
+      value: ComicsButtons
       objectReference: {fileID: 0}
     - target: {fileID: 5105297015642127852, guid: 4b3d142b4d0e80045b7c6278a1bb7817,
         type: 3}
@@ -731,7 +735,7 @@ PrefabInstance:
     - target: {fileID: 1150375328226306815, guid: 4b3d142b4d0e80045b7c6278a1bb7817,
         type: 3}
       propertyPath: m_TagString
-      value: IBButtons
+      value: ComicsButtons
       objectReference: {fileID: 0}
     - target: {fileID: 5105297015642127852, guid: 4b3d142b4d0e80045b7c6278a1bb7817,
         type: 3}
