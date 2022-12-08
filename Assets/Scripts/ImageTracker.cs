@@ -11,6 +11,9 @@ public class ImageTracker : MonoBehaviour
     [SerializeField] private List<GameObject> ObjectsToPlace;
     [SerializeField] private ARTrackedImageManager aRTrackedImageManager;
 
+    [SerializeField] private GameObject DefaultCover;
+    private GameObject _DefaultCover;
+
     [SerializeField] private List<GameObject> FirstComics;
     [SerializeField] private List<GameObject> SecondComics;
     [SerializeField] private List<GameObject> ThirdComics;
@@ -62,13 +65,13 @@ public class ImageTracker : MonoBehaviour
 
     private void Start()
     {
-        RotatingObj = GameObject.Find("RotatingObj");
-        ROFront = GameObject.Find("ROFront");
-        ROBack = GameObject.Find("ROBack");
+        //RotatingObj = GameObject.Find("RotatingObj");
+        //ROFront = GameObject.Find("ROFront");
+        //ROBack = GameObject.Find("ROBack");
 
-        RotatingObj.SetActive(false);
-        ROFront.SetActive(false);
-        ROBack.SetActive(false);
+        //RotatingObj.SetActive(false);
+        //ROFront.SetActive(false);
+        //ROBack.SetActive(false);
 
         _refLibrary = aRTrackedImageManager.referenceLibrary;
         _refImageCount = _refLibrary.count;
@@ -119,6 +122,16 @@ public class ImageTracker : MonoBehaviour
         {
             GameObject newOverlay = new GameObject();
 
+            newOverlay = DefaultCover;
+            if (DefaultCover.gameObject.scene.rootCount == 0)
+            {
+                newOverlay = Instantiate(DefaultCover, transform.localPosition, Quaternion.identity);
+            }
+            _DefaultCover = newOverlay;
+            newOverlay.SetActive(false);
+
+
+
             for (int j = 0; j < 10; j++)
             {
                 newOverlay = FirstComics[j];
@@ -159,6 +172,13 @@ public class ImageTracker : MonoBehaviour
             }
 
             _allObjects.Add(_refLibrary[i].name, newOverlay);
+
+            RotatingObj = _allObjects[_refLibrary[i].name];
+
+            ROFront = GameObject.FindGameObjectsWithTag("ROFront")[0];
+            ROBack = GameObject.FindGameObjectsWithTag("ROBack")[0];
+
+
             newOverlay.SetActive(false);
         }
     }
@@ -166,8 +186,11 @@ public class ImageTracker : MonoBehaviour
     private void ActivateTrackedObject(string imageName)
     {
         Debug.Log("Tracked the target: " + imageName);
-        _allObjects[imageName].SetActive(true);
-        _allObjects[imageName].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
+        RotatingObj.SetActive(true);
+        ROFront = _DefaultCover;
+
+        //_allObjects[imageName].SetActive(true);
+        //_allObjects[imageName].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
         lastActivatedObject = _allObjects[imageName];
         defaultObject = _allObjects[imageName];
@@ -231,10 +254,13 @@ public class ImageTracker : MonoBehaviour
                     if (trackedImage.trackingState == TrackingState.Tracking)
                     {
                         //_allObjects[trackedImage.referenceImage.name].SetActive(true);
-                        _allObjects[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
-                        _allObjects[trackedImage.referenceImage.name].transform.rotation = trackedImage.transform.rotation;
+                        //_allObjects[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
+                        //_allObjects[trackedImage.referenceImage.name].transform.rotation = trackedImage.transform.rotation;
 
-                        ROFront = _allObjects[trackedImage.referenceImage.name];
+                        _DefaultCover.transform.position = trackedImage.transform.position;
+                        _DefaultCover.transform.rotation = trackedImage.transform.rotation;
+
+                        ROFront = _DefaultCover;
                     }
                     else
                     {

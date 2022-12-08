@@ -8,6 +8,8 @@ TagManager:
   - IBButtons
   - ComicsButtons
   - DefaultScreen
+  - ROBack
+  - ROFront
   layers:
   - Default
   - TransparentFX
