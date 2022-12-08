@@ -36,6 +36,10 @@ public class ImageTracker : MonoBehaviour
     private GameObject[] ComicsButtons;
     private GameObject[] DefaultScreenButtons;
 
+    private GameObject RotatingObj;
+    private GameObject ROFront;
+    private GameObject ROBack;
+
     enum ComicsType
     {
         Default = 0,
@@ -58,9 +62,43 @@ public class ImageTracker : MonoBehaviour
 
     private void Start()
     {
+        RotatingObj = GameObject.Find("RotatingObj");
+        ROFront = GameObject.Find("ROFront");
+        ROBack = GameObject.Find("ROBack");
+
+        RotatingObj.SetActive(false);
+        ROFront.SetActive(false);
+        ROBack.SetActive(false);
+
         _refLibrary = aRTrackedImageManager.referenceLibrary;
         _refImageCount = _refLibrary.count;
         LoadObjectDictionary();
+    }
+
+    bool rotateRight = false;
+    bool rotateLeft = false;
+
+    float rotatingAngle = 0.0f;
+
+    private void Update()
+    {
+        if (rotateRight)
+        {
+            RotatingObj.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, -2.0f);
+
+            rotatingAngle += 2.0f;
+
+            if (rotatingAngle > 88.0f)
+            {
+                rotateRight = false;
+                rotatingAngle = 0.0f;
+            }
+        }
+
+        if (rotateLeft)
+        {
+
+        }
     }
 
     public void Initialize()
@@ -192,9 +230,11 @@ public class ImageTracker : MonoBehaviour
 
                     if (trackedImage.trackingState == TrackingState.Tracking)
                     {
-                        _allObjects[trackedImage.referenceImage.name].SetActive(true);
+                        //_allObjects[trackedImage.referenceImage.name].SetActive(true);
                         _allObjects[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
                         _allObjects[trackedImage.referenceImage.name].transform.rotation = trackedImage.transform.rotation;
+
+                        ROFront = _allObjects[trackedImage.referenceImage.name];
                     }
                     else
                     {
@@ -219,12 +259,29 @@ public class ImageTracker : MonoBehaviour
 
                     if (trackedImage.trackingState == TrackingState.Tracking)
                     {
-                        _FirstComics[lastIndexInComics.ToString()].SetActive(true);
+                        //_FirstComics[lastIndexInComics.ToString()].SetActive(true);
                         _FirstComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
                         _FirstComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
                         _FirstComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
-                        lastActivatedObject = _FirstComics[lastIndexInComics.ToString()];
+                        // Rotating right
+                        ROBack = _FirstComics[lastIndexInComics.ToString()];
+
+                        if (lastIndexInComics == 0)
+                        {
+                            ROFront = defaultObject;
+                        }
+                        else
+                        {
+                            _FirstComics[(lastIndexInComics - 1).ToString()].transform.position = trackedImage.transform.position;
+                            _FirstComics[(lastIndexInComics - 1).ToString()].transform.rotation = trackedImage.transform.rotation;
+                            _FirstComics[(lastIndexInComics - 1).ToString()].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0002f);
+                            ROFront = _FirstComics[(lastIndexInComics - 1).ToString()];
+                        }
+
+                        rotateRight = true;
+                        
+                        //lastActivatedObject = _FirstComics[lastIndexInComics.ToString()];
                     }
                     else
                     {
@@ -249,7 +306,7 @@ public class ImageTracker : MonoBehaviour
 
                     if (trackedImage.trackingState == TrackingState.Tracking)
                     {
-                        _SecondComics[lastIndexInComics.ToString()].SetActive(true);
+                        //_SecondComics[lastIndexInComics.ToString()].SetActive(true);
                         _SecondComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
                         _SecondComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
                         _SecondComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
@@ -280,7 +337,7 @@ public class ImageTracker : MonoBehaviour
 
                     if (trackedImage.trackingState == TrackingState.Tracking)
                     {
-                        _ThirdComics[lastIndexInComics.ToString()].SetActive(true);
+                        //_ThirdComics[lastIndexInComics.ToString()].SetActive(true);
                         _ThirdComics[lastIndexInComics.ToString()].transform.position = trackedImage.transform.position;
                         _ThirdComics[lastIndexInComics.ToString()].transform.rotation = trackedImage.transform.rotation;
                         _ThirdComics[lastIndexInComics.ToString()].transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
@@ -352,7 +409,8 @@ public class ImageTracker : MonoBehaviour
     {
         lastIndexInComics = 0;
         currentComicsType = ComicsType.First;
-        lastActivatedObject.SetActive(false);
+        //lastActivatedObject.SetActive(false);
+        RotatingObj.SetActive(false);
     }
 
     public void ActivateBladeRunner()

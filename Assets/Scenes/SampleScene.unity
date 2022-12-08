@@ -1073,7 +1073,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectsToPlace:
+<<<<<<< HEAD
   - {fileID: 7448529056713414355, guid: f00c55bce7389804180ae3d331411ea3, type: 3}
+=======
+  - {fileID: 6215698543680961081, guid: eb031f7c9639292499ccb4e2ddf7d04b, type: 3}
+>>>>>>> 5e72cc1 (first try rotate obj)
   aRTrackedImageManager: {fileID: 40919621}
   FirstComics:
   - {fileID: 7448529056713414355, guid: a928c1f551bb256428fbcc20531ac99f, type: 3}
@@ -4549,6 +4553,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2119422337}
   m_CullTransparentMesh: 1
+<<<<<<< HEAD
 --- !u!1001 &5230736677628578395
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4623,6 +4628,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eb031f7c9639292499ccb4e2ddf7d04b, type: 3}
+=======
+>>>>>>> 5e72cc1 (first try rotate obj)
 --- !u!1001 &8375970776436069602
 PrefabInstance:
   m_ObjectHideFlags: 0
