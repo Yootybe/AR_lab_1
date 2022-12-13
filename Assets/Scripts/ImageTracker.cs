@@ -74,15 +74,41 @@ public class ImageTracker : MonoBehaviour
     {
         if (rotateRight)
         {
-            _ReplasedObj.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, -2.0f);
 
-            rotatingAngle += 2.0f;
-
-            if (rotatingAngle > 188.0f)
+            if (rotatingAngle < 5.0f)
             {
-                GameObject tempFront = Instantiate(_ReplasedObjFront);
+                _ReplasedObjBack.transform.localPosition += new Vector3(0.0f, 50.0f, 0.0f);
+                _ReplasedObj.SetActive(false);
+                _ReplasedObjFront.SetActive(true);
+                _ReplasedObjBack.SetActive(true);
+
+            }
+
+            _ReplasedObjFront.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 5.0f);
+            _ReplasedObjBack.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 5.0f);
+
+
+            //_ReplasedObj.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 5.0f);
+
+            rotatingAngle += 5.0f;
+
+            if (rotatingAngle > 185.0f)
+            {
+                GameObject prevFront = Instantiate(_ReplasedObjFront);
+                GameObject prevBack = Instantiate(_ReplasedObjBack);
+
+                Destroy(_ReplasedObjFront); Destroy(_ReplasedObjBack);
+                _ReplasedObjFront = prevBack;
+                _ReplasedObjBack = prevFront;
+
+                _ReplasedObj.SetActive(true);
+                _ReplasedObjFront.SetActive(false);
+                _ReplasedObjBack.SetActive(false);
+
+
+                /*GameObject tempFront = Instantiate(_ReplasedObjFront);
                 _ReplasedObjFront = Instantiate(_ReplasedObjBack);
-                _ReplasedObjBack = Instantiate(tempFront);
+                _ReplasedObjBack = Instantiate(tempFront);*/
 
                 rotateRight = false;
                 rotatingAngle = 0.0f;
@@ -91,15 +117,38 @@ public class ImageTracker : MonoBehaviour
 
         if (rotateLeft)
         {
-            _ReplasedObj.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 2.0f);
-
-            rotatingAngle += 2.0f;
-
-            if (rotatingAngle > 188.0f)
+            if (rotatingAngle < 5.0f)
             {
-                GameObject tempFront = Instantiate(_ReplasedObjFront);
+                _ReplasedObjBack.transform.localPosition += new Vector3(0.0f, 50.0f, 0.0f);
+                _ReplasedObj.SetActive(false);
+                _ReplasedObjFront.SetActive(true);
+                _ReplasedObjBack.SetActive(true);
+
+            }
+
+            _ReplasedObjFront.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 5.0f);
+            _ReplasedObjBack.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 5.0f);
+
+            //_ReplasedObj.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, -5.0f);
+
+            rotatingAngle += 5.0f;
+
+            if (rotatingAngle > 185.0f)
+            {
+                GameObject prevFront = Instantiate(_ReplasedObjFront);
+                GameObject prevBack = Instantiate(_ReplasedObjBack);
+
+                Destroy(_ReplasedObjFront); Destroy(_ReplasedObjBack);
+                _ReplasedObjFront = prevBack;
+                _ReplasedObjBack = prevFront;
+
+                _ReplasedObj.SetActive(true);
+                _ReplasedObjFront.SetActive(false);
+                _ReplasedObjBack.SetActive(false);
+
+                /*GameObject tempFront = Instantiate(_ReplasedObjFront);
                 _ReplasedObjFront = Instantiate(_ReplasedObjBack);
-                _ReplasedObjBack = Instantiate(tempFront);
+                _ReplasedObjBack = Instantiate(tempFront);*/
 
                 rotateLeft = false;
                 rotatingAngle = 0.0f;
@@ -181,9 +230,11 @@ public class ImageTracker : MonoBehaviour
     {
         Debug.Log("Tracked the target: " + imageName);
         _ReplasedObj.SetActive(true);
-        _ReplasedObj.transform.localPosition = new Vector3(0.00025f, 0.00065f, 0.0003f);
+        _ReplasedObj.transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
-        GameObject[] objInside = _ReplasedObj.GetComponentsInChildren<GameObject>(true);
+        Debug.LogWarning("ActivateTrackedObject()");
+
+        /*GameObject[] objInside = _ReplasedObj.GetComponentsInChildren<GameObject>(true);
         for (int i = 0; i < objInside.Length; i++)
         {
             if (objInside[i].name == "ROFront")
@@ -191,14 +242,30 @@ public class ImageTracker : MonoBehaviour
 
             if (objInside[i].name == "ROBack")
                 _ReplasedObjBack = objInside[i];
-        }
+        }*/
 
-        _ReplasedObjFront.SetActive(true);
-        _ReplasedObjBack.SetActive(true);
+
+        _ReplasedObjFront = GameObject.FindGameObjectsWithTag("ROFront")[0];
+        _ReplasedObjBack = GameObject.FindGameObjectsWithTag("ROBack")[0];
+
+        Debug.LogWarning("ActivateTrackedObject() 1");
+
+        if (!_ReplasedObj)
+            Debug.LogWarning("!_ReplasedObj");
+
+        if (!_ReplasedObjBack)
+            Debug.LogWarning("!_ReplasedObjBack");
+
+        if (!_ReplasedObjFront)
+            Debug.LogWarning("!_ReplasedObjFront");
+
+        //_ReplasedObjFront.SetActive(true);
+        //_ReplasedObjBack.SetActive(true);
 
         _ReplasedObjFront = _DefaultCover;
         _ReplasedObjFront.transform.position = _ReplasedObj.transform.position;
         _ReplasedObjFront.transform.rotation = _ReplasedObj.transform.rotation;
+        //_ReplasedObjFront.transform.position = _ReplasedObj.transform.position;
 
 
         ComicsButtons = GameObject.FindGameObjectsWithTag("ComicsButtons");
@@ -246,6 +313,9 @@ public class ImageTracker : MonoBehaviour
     private void UpdateTrackedObject(ARTrackedImage trackedImage)
     {
 
+        if (rotateRight || rotateLeft)
+            return;
+
         switch (currentComicsType)
         {
             case ComicsType.Default:
@@ -263,7 +333,7 @@ public class ImageTracker : MonoBehaviour
                         _ReplasedObj.transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
                         _ReplasedObjBack = _DefaultCover;
-                        _ReplasedObjBack.SetActive(true);
+                        //_ReplasedObjBack.SetActive(true);
                         _ReplasedObjBack.transform.position = trackedImage.transform.position;
                         _ReplasedObjBack.transform.rotation = trackedImage.transform.rotation;
                         _ReplasedObjBack.transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
@@ -298,8 +368,12 @@ public class ImageTracker : MonoBehaviour
                         _ReplasedObj.transform.rotation = trackedImage.transform.rotation;
                         _ReplasedObj.transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
-                        _ReplasedObjBack = _FirstComics[lastIndexInComics.ToString()];
-                        _ReplasedObjBack.SetActive(true);
+
+                        Destroy(_ReplasedObjBack);
+
+                        _ReplasedObjBack = Instantiate(_FirstComics[lastIndexInComics.ToString()]);
+                        //_ReplasedObjBack = _FirstComics[lastIndexInComics.ToString()];
+                        //_ReplasedObjBack.SetActive(true);
                         _ReplasedObjBack.transform.position = trackedImage.transform.position;
                         _ReplasedObjBack.transform.rotation = trackedImage.transform.rotation;
                         _ReplasedObjBack.transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
@@ -345,7 +419,7 @@ public class ImageTracker : MonoBehaviour
                         _ReplasedObj.transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
                         _ReplasedObjBack = _SecondComics[lastIndexInComics.ToString()];
-                        _ReplasedObjBack.SetActive(true);
+                        //_ReplasedObjBack.SetActive(true);
                         _ReplasedObjBack.transform.position = trackedImage.transform.position;
                         _ReplasedObjBack.transform.rotation = trackedImage.transform.rotation;
                         _ReplasedObjBack.transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
@@ -392,7 +466,7 @@ public class ImageTracker : MonoBehaviour
                         _ReplasedObj.transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
                         _ReplasedObjBack = _ThirdComics[lastIndexInComics.ToString()];
-                        _ReplasedObjBack.SetActive(true);
+                        //_ReplasedObjBack.SetActive(true);
                         _ReplasedObjBack.transform.position = trackedImage.transform.position;
                         _ReplasedObjBack.transform.rotation = trackedImage.transform.rotation;
                         _ReplasedObjBack.transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
