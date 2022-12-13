@@ -1078,7 +1078,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aRTrackedImageManager: {fileID: 40919621}
-  ReplasedObj: {fileID: 6215698543680961081, guid: eb031f7c9639292499ccb4e2ddf7d04b,
+  ReplasedObjFront: {fileID: 4767161931883045973, guid: 19d8f6b05cef5e3469ce1543d8dc428c,
+    type: 3}
+  ReplasedObjBack: {fileID: 6641376157625112983, guid: 2c40e6dd03bf4d643bc0254a36b6dfbb,
     type: 3}
   DefaultCover: {fileID: 7448529056713414355, guid: f00c55bce7389804180ae3d331411ea3,
     type: 3}
@@ -2551,7 +2553,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aRTrackedImageManager: {fileID: 40919621}
-  ReplasedObj: {fileID: 0}
+  ReplasedObjFront: {fileID: 0}
+  ReplasedObjBack: {fileID: 0}
   DefaultCover: {fileID: 0}
   FirstComics: []
   SecondComics: []
