@@ -74,6 +74,16 @@ public class ImageTracker : MonoBehaviour
     {
         if (rotateRight)
         {
+            if (rotatingAngle < 5.0f)
+                _ReplasedObjBack.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, -180.0f);
+
+            if (rotatingAngle > 90.0f && rotatingAngle < 100.0f)
+            {
+                _ReplasedObjBack.transform.position += new Vector3(0.0f, 0.05f, 0.0f);
+
+                _ReplasedObjFront.transform.position += new Vector3(0.0f, -0.05f, 0.0f);
+            }
+
             _ReplasedObjFront.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 5.0f);
             _ReplasedObjBack.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 5.0f);
 
@@ -85,11 +95,17 @@ public class ImageTracker : MonoBehaviour
                 GameObject prevBack = Instantiate(_ReplasedObjBack);
 
                 Destroy(_ReplasedObjFront); Destroy(_ReplasedObjBack);
+
+                //prevBack.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, -180.0f);
                 _ReplasedObjFront = prevBack;
                 _ReplasedObjBack = prevFront;
 
                 _ReplasedObjFront.SetActive(true);
                 _ReplasedObjBack.SetActive(false);
+
+                ActivateDefaultScreenButtons();
+
+                busy = true;
 
                 rotateRight = false;
                 rotatingAngle = 0.0f;
@@ -98,10 +114,23 @@ public class ImageTracker : MonoBehaviour
 
         if (rotateLeft)
         {
-            _ReplasedObjFront.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 5.0f);
-            _ReplasedObjBack.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 5.0f);
+            if (rotatingAngle < 5.0f)
+                _ReplasedObjBack.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 180.0f);
+
+            if (rotatingAngle > 90.0f && rotatingAngle < 100.0f)
+            {
+                _ReplasedObjBack.transform.position += new Vector3(0.0f, 0.05f, 0.0f);
+                
+                _ReplasedObjFront.transform.position += new Vector3(0.0f, -0.05f, 0.0f);
+            }
+                
+
+            _ReplasedObjFront.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, -5.0f);
+            _ReplasedObjBack.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, -5.0f);
 
             rotatingAngle += 5.0f;
+
+            Debug.LogWarning("(rotateLeft)");
 
             if (rotatingAngle > 185.0f)
             {
@@ -109,11 +138,29 @@ public class ImageTracker : MonoBehaviour
                 GameObject prevBack = Instantiate(_ReplasedObjBack);
 
                 Destroy(_ReplasedObjFront); Destroy(_ReplasedObjBack);
+
+                //prevBack.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 180.0f);
                 _ReplasedObjFront = prevBack;
                 _ReplasedObjBack = prevFront;
 
                 _ReplasedObjFront.SetActive(true);
                 _ReplasedObjBack.SetActive(false);
+
+                if (currentComicsType == ComicsType.Default)
+                {
+                    ActivateChangeComicsButtons();
+
+                    for (int i = 0; i < ComicsButtons.Length; i++)
+                    {
+                        ComicsButtons[i].SetActive(true);
+                    }
+                }
+                else
+                {
+                    ActivateDefaultScreenButtons();
+                }
+                
+                busy = true;
 
                 rotateLeft = false;
                 rotatingAngle = 0.0f;
@@ -213,11 +260,15 @@ public class ImageTracker : MonoBehaviour
         if (!_ReplasedObjFront)
             Debug.LogWarning("!_ReplasedObjFront");
 
-        _ReplasedObjFront = _DefaultCover;
+        //_ReplasedObjFront = _DefaultCover;
+
         //_ReplasedObjFront.transform.position = _ReplasedObj.transform.position;
         //_ReplasedObjFront.transform.rotation = _ReplasedObj.transform.rotation;
+        //ActivateChangeComicsButtons();
+    }
 
-
+    private void ActivateChangeComicsButtons()
+    {
         ComicsButtons = GameObject.FindGameObjectsWithTag("ComicsButtons");
 
         for (int i = 0; i < ComicsButtons.Length; i++)
@@ -236,7 +287,7 @@ public class ImageTracker : MonoBehaviour
             if (button.name == "GhostInTheShell")
                 button.onClick.AddListener(ActivateGitS);
 
-            ComicsButtons[i].SetActive(false);
+            //ComicsButtons[i].SetActive(false);
         }
     }
 
@@ -260,16 +311,27 @@ public class ImageTracker : MonoBehaviour
     }
 
 
+    bool busy = false;
+
+    bool firstInitialize = true;
+
     private void UpdateTrackedObject(ARTrackedImage trackedImage)
     {
-
         if (rotateRight || rotateLeft)
+            return;
+
+        if (busy)
             return;
 
         switch (currentComicsType)
         {
             case ComicsType.Default:
                 {
+
+                    Debug.LogWarning("case ComicsType.Default");
+                    ActivateChangeComicsButtons();
+                    
+
                     for (int i = 0; i < ComicsButtons.Length; i++)
                     {
                         ComicsButtons[i].SetActive(true);
@@ -277,6 +339,8 @@ public class ImageTracker : MonoBehaviour
 
                     if (trackedImage.trackingState == TrackingState.Tracking)
                     {
+                        Debug.LogWarning("case ComicsType.Default 1");
+
                         /*
                         _ReplasedObjFront.SetActive(true);
                         _ReplasedObjFront.transform.position = trackedImage.transform.position;
@@ -284,13 +348,32 @@ public class ImageTracker : MonoBehaviour
                         _ReplasedObjFront.transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
                         */
 
-                        _ReplasedObjBack = _DefaultCover;
+                        Destroy(_ReplasedObjBack);
+
+                        _ReplasedObjBack = Instantiate(_DefaultCover);
+
+                        
+
                         _ReplasedObjBack.SetActive(true);
                         _ReplasedObjBack.transform.position = trackedImage.transform.position;
                         _ReplasedObjBack.transform.rotation = trackedImage.transform.rotation;
                         _ReplasedObjBack.transform.localScale = new Vector3(0.00025f, 0.00065f, 0.0003f);
 
-                        rotateLeft = true;
+                        ActivateChangeComicsButtons();
+
+                        for (int i = 0; i < ComicsButtons.Length; i++)
+                        {
+                            ComicsButtons[i].SetActive(true);
+                        }
+
+                        busy = true;
+
+                        
+
+                        if (!firstInitialize)
+                            rotateLeft = true;
+                        else
+                            firstInitialize = false;
                     }
                     else
                     {
@@ -500,8 +583,11 @@ public class ImageTracker : MonoBehaviour
     bool doTurnLeft = false;
     public void ActivateDefaultCover()
     {
+        Debug.LogWarning("ActivateDefaultCover()");
+
         lastIndexInComics = -1;
 
+        busy = false;
         _ReplasedObjBack.SetActive(false);
 
         currentComicsType = ComicsType.Default;
@@ -509,37 +595,53 @@ public class ImageTracker : MonoBehaviour
 
     public void ActivateHorizon()
     {
+        Debug.LogWarning("ActivateHorizon()");
+
         lastIndexInComics = 0;
-        currentComicsType = ComicsType.First;
+        _ReplasedObjBack.SetActive(false);
+        
+        
 
         doTurnRight = true;
 
-        _ReplasedObjBack.SetActive(false);
+        busy = false;
+
+        currentComicsType = ComicsType.First;
+
     }
 
     public void ActivateBladeRunner()
     {
+        Debug.LogWarning("ActivateHorizon()");
+
         lastIndexInComics = 0;
-        currentComicsType = ComicsType.Second;
+        
         doTurnRight = true;
 
+        busy = false;
         _ReplasedObjBack.SetActive(false);
+        currentComicsType = ComicsType.Second;
     }
 
     public void ActivateGitS()
     {
+        Debug.LogWarning("ActivateGitS()");
+
         lastIndexInComics = 0;
-        currentComicsType = ComicsType.Third;
+        
         doTurnRight = true;
 
+        busy = false;
         _ReplasedObjBack.SetActive(false);
+
+        currentComicsType = ComicsType.Third;
     }
 
     public void TurnPageRight()
     {
         Debug.LogWarning("TurnPageRight() 1");
 
-        if (lastIndexInComics < 9)
+        if (lastIndexInComics < 9 && lastIndexInComics != -1)
         {
             Debug.LogWarning("TurnPageRight() 2");
 
@@ -547,6 +649,7 @@ public class ImageTracker : MonoBehaviour
 
             doTurnRight = true;
 
+            busy = false;
             _ReplasedObjBack.SetActive(false);
         }
     }
@@ -555,7 +658,7 @@ public class ImageTracker : MonoBehaviour
     {
         Debug.LogWarning("TurnPageLeft() 1");
 
-        if (lastIndexInComics > 0)
+        if (lastIndexInComics > 0 && lastIndexInComics != -1)
         {
             Debug.LogWarning("TurnPageLeft() 2");
 
@@ -563,13 +666,15 @@ public class ImageTracker : MonoBehaviour
 
             doTurnLeft = true;
 
+            busy = false;
             _ReplasedObjBack.SetActive(false);
         }
 
-        if (lastIndexInComics == 0)
+        if (lastIndexInComics == 0 && lastIndexInComics != -1)
         {
             Debug.LogWarning("TurnPageLeft() 3");
 
+            busy = false;
             ActivateDefaultCover();
         }
     }
