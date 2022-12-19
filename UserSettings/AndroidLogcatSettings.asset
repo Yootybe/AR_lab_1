@@ -1,9 +1,9 @@
 {
-    "m_SelectedDeviceId": "R52N601707R",
+    "m_SelectedDeviceId": "R52N503KNEL",
     "m_SelectedPackage": {
-        "deviceId": "R52N601707R",
+        "deviceId": "R52N503KNEL",
         "name": "com.DefaultCompany.AR_lab_1",
-        "processId": 16817,
+        "processId": 16469,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -558,6 +558,12 @@
             "deviceId": "R52N601707R",
             "name": "com.DefaultCompany.AR_lab_1",
             "processId": 16817,
+            "exited": false
+        },
+        {
+            "deviceId": "R52N503KNEL",
+            "name": "com.DefaultCompany.AR_lab_1",
+            "processId": 16469,
             "exited": false
         }
     ],
